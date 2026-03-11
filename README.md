@@ -2,106 +2,162 @@
     <img src="https://amica.arbius.ai/ogp.png" width="600" style="margin-bottom: 0.2;"/>
 </p>
 
-<h2 align="center"><a href="https://amica.arbius.ai">Amica: Your friendly personal AI</a></h2>
+<h2 align="center">AmicaV1</h2>
 
-
-<h5 align="center"> If you like our project, please give us a star ⭐ on GitHub.</h2>
-
-
-<h5 align="center">
-
-[![twitter](https://img.shields.io/badge/Twitter%20-black)](https://twitter.com/arbius_ai)
-[![License](https://img.shields.io/github/license/semperai/amica)](https://github.com/semperai/amica/blob/main/LICENSE)
-[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fsemperai%2Famica&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
-[![GitHub issues](https://img.shields.io/github/issues/semperai/amica?color=critical&label=Issues)](https://github.com/semperai/amica/issues?q=is%3Aopen+is%3Aissue)
-[![GitHub closed issues](https://img.shields.io/github/issues-closed/semperai/amica?color=success&label=Issues)](https://github.com/semperai/amica/issues?q=is%3Aissue+is%3Aclosed)
-
-</h5>
-
-Amica allows you to converse with highly customizable 3D characters that can communicate via natural voice chat and vision, with an emotion engine that allows Amica to express feelings and more. Customize her any way you want with any AI technology.
-
-[Try Amica here on mobile, tablet or desktop](https://amica.arbius.ai)
-
-> **For Windows Users**: Please create a new folder for Amica during installation to prevent the unintentional deletion of other files during uninstallation.
-
-<p align="center"><a href="https://github.com/flukexp/llama-piper-go/releases/download/v1.0.0/llama-piper-window.exe"><img src="https://img.shields.io/badge/Download%20for%20Windows%20-green?style=for-the-badge&logo=windows" /></a>
-
-We just released Amica 1.2 with lots of new features. [Docs](https://docs.heyamica.com/) will be further updated soon, **watch the video to learn about what Amica 1.2 offers:**
-
-[![Video Title](https://img.youtube.com/vi/3zCN2IlxHrU/0.jpg)](https://www.youtube.com/watch?v=3zCN2IlxHrU)
-
-You can import VRM files, adjust the voice to fit the character, and generate response text that includes emotional expressions.
-
-
+<p align="center">
+Форк Amica для Lex. Этот репозиторий поддерживается как собственность Lex и входит в экосистему <strong>lex-project</strong>.
 </p>
 
-The various features of Amica mainly use and support the following technologies:
+## Статус форка
 
-> To see tutorials on configuring any of these with Amica please visit the [official Amica documentation](https://docs.heyamica.com/).
+Этот репозиторий является рабочим форком Amica и используется как стартовая точка для `AmicaV1`.
 
-- 3D Rendering
-  - [three.js](https://threejs.org/)
-- Displaying 3D characters
-  - [@pixiv/three-vrm](https://github.com/pixiv/three-vrm)
-- Running Transformers in the browser
-  - [Transformers.js](https://huggingface.co/docs/transformers.js/index)
-- Speech recognition
-  - [Whisper](https://openai.com/research/whisper)
-- Voice Activity Detection
-  - [Silero VAD](https://github.com/ricky0123/vad/)
-- ChatBot
-  - [Llama.cpp server](https://github.com/ggerganov/llama.cpp)
-  - [ChatGPT API](https://platform.openai.com/docs/api-reference/chat) (compatible with projects such as [LM Studio](https://lmstudio.ai/))
-  - [Window.ai](https://windowai.io/)
-  - [Ollama](https://ollama.ai)
-  - [KoboldCpp](https://github.com/LostRuins/koboldcpp)
-  - [Oobabooga](https://github.com/oobabooga/text-generation-webui/wiki)
-  - [OpenRouter](https://openrouter.ai/) (access to multiple AI models)
-- Text-to-Speech
-  - [Eleven Labs API](https://elevenlabs.io/)
-  - [Speech T5](https://huggingface.co/microsoft/speecht5_tts)
-  - [OpenAI](https://platform.openai.com/docs/guides/text-to-speech)
-  - [Coqui (Local)](https://github.com/coqui-ai)
-  - [RVC](https://github.com/SocAIty/Retrieval-based-Voice-Conversion-FastAPI)
-  - [AllTalkTTS](https://github.com/erew123/alltalk_tts)
-- Vision
-  - [Bakllava](https://github.com/SkunkworksAI/BakLLaVA)
+- Апстрим: [semperai/amica](https://github.com/semperai/amica)
+- Текущий владелец: Lex
+- Группа проектов: `lex-project`
+- Текущий фокус: стабилизировать локальную разработку, локализовать интерфейс, заменить модельный стек, усилить личность персонажа, улучшить память и подготовить публичный деплой
 
-## 🛠️ Installation and running
+## План работ по AmicaV1
 
-To run this project locally, clone or download the repository.
+Текущий рабочий план по `AmicaV1`:
 
-```bash
-git clone git@github.com:semperai/amica.git
-```
+1. Добавить полноценную русскую локализацию на равных правах с остальными языками.
+2. Перевести стек ассистента с OpenAI-first дефолтов на решения на базе Qwen там, где это уместно.
+3. Настроить характер ассистента и убрать стандартный безопасный/цензурированный тон там, где этого требует продуктовая задача.
+4. Настроить приятный и стабильный голос.
+5. Развернуть проект на сервере и вывести в интернет.
+6. Добавить режимы личности/агентов, например horny, business и другие.
+7. Построить более сильный слой памяти, чтобы Amica вела себя как цельная развивающаяся личность.
 
-Install the required packages.
+## Что Это За Проект
 
-```bash
-npm install
-```
+Amica позволяет общаться с настраиваемыми 3D-персонажами, которые умеют вести голосовой диалог, использовать vision, выражать эмоции и работать как AI-компаньон. Этот форк сохраняет фундамент оригинального проекта и превращает его в продуктовый companion runtime для `lex-project`.
 
-After installing the packages, start the development web server using the following command:
+Сейчас проект объединяет следующие основные области:
+
+- оболочка приложения на `Next.js / React / TypeScript`
+- 3D-аватар через `three.js` и `@pixiv/three-vrm`
+- оркестрация чата через несколько LLM-провайдеров
+- TTS, STT, webcam vision и idle-поведение
+- поддержку desktop-сборки через Tauri
+
+## Локальная Разработка
+
+### Требования
+
+- `node@18`, установленный через Homebrew
+- shell-сессия на macOS с добавленным в `PATH` `node@18`
+
+Рекомендуемая настройка shell для текущего проекта:
 
 ```bash
-npm run dev
+export PATH="/opt/homebrew/opt/node@18/bin:$PATH"
 ```
 
-Once started, please visit the following URL to confirm that it is working properly.
+Проверка активного runtime:
 
-[http://localhost:3000](http://localhost:3000)
+```bash
+node -v
+npm -v
+```
 
-### 📝 Configuration
+Ожидаемая версия Node: `18.x`.
 
-Most of the configuration is done in the `.env.local` file. Reference the `config.ts` file for the available options.
+### Первый Запуск
 
-#### OpenRouter Configuration
+```bash
+npm ci
+node scripts/generate_paths.js
+npm run build:workers
+npx next dev
+```
 
-To use OpenRouter as a chat backend, set the following environment variables in your `.env.local` file:
+После старта открыть:
 
-- `NEXT_PUBLIC_OPENROUTER_APIKEY`: Your OpenRouter API key (required)
-- `NEXT_PUBLIC_OPENROUTER_URL`: Custom OpenRouter API URL (optional, defaults to https://openrouter.ai/api/v1)
-- `NEXT_PUBLIC_OPENROUTER_MODEL`: Default OpenRouter model (optional, defaults to openai/gpt-3.5-turbo)
+```bash
+http://localhost:3000
+```
+
+### Ежедневный Старт Во Время Отладки
+
+Использовать этот сценарий как основной во время разработки:
+
+```bash
+export PATH="/opt/homebrew/opt/node@18/bin:$PATH"
+node scripts/generate_paths.js
+npm run build:workers
+npx next dev
+```
+
+### Как Остановить Локальный Сервер
+
+Если сервер запущен в текущем терминале:
+
+```bash
+Ctrl+C
+```
+
+Если нужно остановить зависший или фоновый процесс:
+
+```bash
+lsof -nP -iTCP:3000 -sTCP:LISTEN
+kill <PID>
+```
+
+### Дежурная Памятка Для Отладки
+
+Команды, которые стоит держать под рукой во время работы:
+
+```bash
+# проверить активные node/npm
+node -v
+npm -v
+
+# проверить, отвечает ли localhost:3000
+curl -I http://localhost:3000
+
+# посмотреть, кто слушает 3000 порт
+lsof -nP -iTCP:3000 -sTCP:LISTEN
+
+# посмотреть потребление памяти и CPU у Next / node
+ps -Ao pid,ppid,%cpu,%mem,rss,vsz,etime,command | rg "next dev|next-server|node .*amica|npm exec next dev"
+
+# пересобрать сгенерированные пути
+node scripts/generate_paths.js
+
+# пересобрать worker bundle
+npm run build:workers
+
+# переустановить зависимости с нуля
+rm -rf node_modules .next
+npm ci
+```
+
+## Конфигурация
+
+Основная конфигурация проекта задается через `.env.local`. Для списка доступных параметров смотри `config.ts`.
+
+### Рекомендуемые Локальные Значения
+
+Для текущего локально проверенного сценария:
+
+- Chat backend: `ChatGPT`
+- OpenAI URL: `https://api.openai.com`
+- OpenAI Model: `gpt-4o-mini`
+- Vision backend: `OpenAI`
+- Vision URL: `https://api.openai.com`
+- Vision Model: `gpt-4.1-mini`
+- TTS backend: `OpenAI TTS`
+- TTS URL: `https://api.openai.com`
+- TTS Model: `tts-1`
+
+### Конфигурация OpenRouter
+
+Чтобы использовать OpenRouter как чат-бэкенд, задай следующие переменные в `.env.local`:
+
+- `NEXT_PUBLIC_OPENROUTER_APIKEY`: API key OpenRouter
+- `NEXT_PUBLIC_OPENROUTER_URL`: кастомный URL OpenRouter, если нужен
+- `NEXT_PUBLIC_OPENROUTER_MODEL`: модель OpenRouter по умолчанию
 
 ```bash
 amica
@@ -111,35 +167,45 @@ amica
 │   │   └── config.ts
 ```
 
-### 📦 Desktop Application
+## Desktop Приложение
 
-Amica uses [Tauri](https://tauri.app/) to build the desktop application.
+Amica использует [Tauri](https://tauri.app/) для desktop-сборки.
 
-To develop the desktop application, use the following command:
+Для локальной разработки desktop-версии:
 
 ```bash
 npm run tauri dev
 ```
 
-## 📖 Documentation
+## Документация
 
-View the [documentation](https://docs.heyamica.com) for more information on how to configure and use Amica.
+Официальная документация апстрима:
 
-## 📜 History
+[https://docs.heyamica.com](https://docs.heyamica.com)
 
-This project originated as a fork of ChatVRM by Pixiv:
+Нужно учитывать, что текущий форк уже развивается в собственную сторону и локальные рабочие договоренности в этом `README` важнее, чем старые инструкции апстрима.
+
+## История
+
+Исторически проект начался как форк ChatVRM от Pixiv, затем развивался в публичный проект Amica, а после этого стал основой для форка Lex:
 
 [https://pixiv.github.io/ChatVRM](https://pixiv.github.io/ChatVRM)
 
-## 🔒 License
-* The majority of this project is released under the MIT license as found in the [LICENSE](https://github.com/semperai/amica/blob/master/LICENSE) file.
-* Assets such as 3D models and images are released under their authors respective licenses.
+## Лицензия
 
+Этот форк наследует лицензионные ограничения кода и ассетов от апстрим-компонентов.
 
-## ✨ Star History
+- Основная часть оригинального проекта распространяется по MIT, см. [LICENSE](https://github.com/semperai/amica/blob/master/LICENSE).
+- Ассеты, включая 3D-модели и изображения, распространяются по лицензиям их авторов.
+- Все тексты, планирование, branding, operational notes и будущие изменения форка Lex относятся к рабочему контуру `lex-project`, если явно не указано иное.
+
+## История Звезд
+
 [![Star History](https://api.star-history.com/svg?repos=semperai/amica&type=Date)](https://star-history.com/#semperai/amica&Date)
 
-## 🤗 Contributors
+## Участники
+
+Исторический список контрибьюторов апстрима:
 
 <a href="https://github.com/semperai/amica/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=semperai/amica" />
