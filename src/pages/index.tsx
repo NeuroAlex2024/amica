@@ -53,7 +53,7 @@ import { Message, Role } from "@/features/chat/messages";
 import { ChatContext } from "@/features/chat/chatContext";
 import { AlertContext } from "@/features/alert/alertContext";
 
-import { config, updateConfig } from '@/utils/config';
+import { config, syncLanguageConfig, updateConfig } from '@/utils/config';
 import { isTauri } from '@/utils/isTauri';
 import { langs } from '@/i18n/langs';
 import { VrmStoreProvider } from "@/features/vrmStore/vrmStoreContext";
@@ -329,6 +329,14 @@ export default function Home() {
   useEffect(() => {
     handleChatLogs(chatLog);
   }, [chatLog]);
+
+  useEffect(() => {
+    if (!currLang) {
+      return;
+    }
+
+    void syncLanguageConfig(currLang);
+  }, [currLang]);
 
   // this exists to prevent build errors with ssr
   useEffect(() => setShowContent(true), []);

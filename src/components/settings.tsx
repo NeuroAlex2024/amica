@@ -369,6 +369,8 @@ export const Settings = ({
     case 'language':
       return <LanguagePage
         setSettingsUpdated={setSettingsUpdated}
+        setSystemPrompt={setSystemPrompt}
+        setVisionSystemPrompt={setVisionSystemPrompt}
       />;
 
     case 'tts':

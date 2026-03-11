@@ -1,4 +1,5 @@
 import { config } from '@/utils/config';
+import { normalizeLanguage } from '@/utils/languageDefaults';
 
 export async function openaiWhisper(
   file: File,
@@ -13,7 +14,7 @@ export async function openaiWhisper(
   const formData = new FormData();
   formData.append('file', file);
   formData.append('model', config('openai_whisper_model'));
-  formData.append('language', 'en');
+  formData.append('language', normalizeLanguage(config('language')));
   if (prompt) {
     formData.append('prompt', prompt);
   }
