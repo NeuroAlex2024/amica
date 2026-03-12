@@ -39,24 +39,28 @@
 
 ### Текущий статус миграции модельного стека
 
-На текущем этапе уже завершен первый практический шаг по миграции чата:
+На текущем этапе уже собран рабочий гибридный стек:
 
 - добавлен отдельный chat provider `Alibaba Cloud`
 - чат работает через `Alibaba Cloud Model Studio`
 - текущая рабочая модель для локальной проверки: `qwen3.5-flash`
-- интеграция чата идет через OpenAI-compatible path Alibaba Cloud
-- для стабильности браузерный вызов завернут в локальный server-side proxy `POST /api/alibabaChat/`
-- в настройках доступен переключатель `thinking mode`, по умолчанию он выключен
+- vision переведен на `Alibaba Cloud` через совместимый multimodal path, рабочая модель по умолчанию `qwen3.5-plus`
+- TTS переведен на отдельный backend `Alibaba Cloud` с server-side proxy, модель по умолчанию `qwen3-tts-flash`
+- для TTS в настройках доступен выбор voice preset и ручной ввод `voice id`
+- интеграция чата и vision идет через OpenAI-compatible path Alibaba Cloud
+- для стабильности браузерные вызовы завернуты в локальные server-side proxy routes
+- в настройках чата доступен переключатель `thinking mode`, по умолчанию он выключен
 - после перезагрузки страницы контекст активного диалога сбрасывается
+- STT осознанно оставлен на `OpenAI Whisper`, потому что на текущем этапе это лучший рабочий баланс качества и простоты интеграции
 
 ### Дорожная карта миграции на Alibaba Cloud
 
 Дальнейший целевой план по стеку такой:
 
-1. Сначала перевести `chat` на `qwen3.5-plus` через existing OpenAI-compatible path.
-2. Потом перевести `vision` на `qwen-vl-plus` или `qwen3.5-plus` через тот же compatible path.
-3. Потом добавить отдельный `alibaba_asr` backend на `qwen3-asr-flash`.
-4. В конце добавить отдельный `alibaba_tts` backend, и здесь использовать server-side proxy, а не прямой фронтовый вызов.
+1. ✅ Перевести `chat` на Qwen через existing OpenAI-compatible path. Текущий рабочий локальный вариант: `qwen3.5-flash`, при необходимости можно переключить на `qwen3.5-plus`.
+2. ✅ Перевести `vision` на `qwen3.5-plus` через тот же compatible path.
+3. ✅ Отдельно оценить `Alibaba ASR` как замену `OpenAI Whisper`. По результатам текущего этапа принято решение пока оставить `OpenAI Whisper`, потому что он уже работает отлично и не является проблемной точкой по качеству или стоимости.
+4. ✅ Добавить отдельный `alibaba_tts` backend с server-side proxy вместо прямого фронтового вызова.
 
 ## Что Это За Проект
 
@@ -197,23 +201,37 @@ npm ci
 - Alibaba URL: `https://dashscope-intl.aliyuncs.com/compatible-mode`
 - Alibaba Model: `qwen3.5-flash`
 - Alibaba Thinking Mode: `false`
-- Vision backend: `OpenAI`
-- Vision URL: `https://api.openai.com`
-- Vision Model: `gpt-4.1-mini`
-- TTS backend: `OpenAI TTS`
-- TTS URL: `https://api.openai.com`
-- TTS Model: `tts-1`
+- Vision backend: `Alibaba Cloud`
+- Vision URL: `https://dashscope-intl.aliyuncs.com/compatible-mode`
+- Vision Model: `qwen3.5-plus`
+- TTS backend: `Alibaba Cloud`
+- Alibaba TTS URL: `https://dashscope-intl.aliyuncs.com`
+- Alibaba TTS Model: `qwen3-tts-flash`
+- Alibaba TTS Voice: `Serena` или другой voice id из настроек
+- STT backend: `Whisper (OpenAI)`
+- Whisper Model: `whisper-1`
 
 ### Конфигурация Alibaba Cloud
 
-Чтобы использовать Alibaba Cloud как чат-бэкенд, задай следующие переменные в `.env.local`:
+Чтобы использовать Alibaba Cloud в текущем стеке, задай следующие переменные в `.env.local`:
 
-- `NEXT_PUBLIC_ALIBABA_APIKEY`: API key Alibaba Cloud Model Studio
+- `NEXT_PUBLIC_ALIBABA_APIKEY`: API key Alibaba Cloud Model Studio для чата и общий fallback
 - `NEXT_PUBLIC_ALIBABA_URL`: базовый URL compatible-mode, для Singapore `https://dashscope-intl.aliyuncs.com/compatible-mode`
 - `NEXT_PUBLIC_ALIBABA_MODEL`: модель чата, например `qwen3.5-flash`
 - `NEXT_PUBLIC_ALIBABA_ENABLE_THINKING`: `true` или `false`
+- `NEXT_PUBLIC_VISION_ALIBABA_APIKEY`: отдельный API key для vision, если нужен
+- `NEXT_PUBLIC_VISION_ALIBABA_URL`: URL vision compatible-mode, по умолчанию `https://dashscope-intl.aliyuncs.com/compatible-mode`
+- `NEXT_PUBLIC_VISION_ALIBABA_MODEL`: модель vision, по умолчанию `qwen3.5-plus`
+- `NEXT_PUBLIC_ALIBABA_TTS_APIKEY`: отдельный API key для TTS, если нужен
+- `NEXT_PUBLIC_ALIBABA_TTS_URL`: базовый URL TTS API, по умолчанию `https://dashscope-intl.aliyuncs.com`
+- `NEXT_PUBLIC_ALIBABA_TTS_MODEL`: модель TTS, по умолчанию `qwen3-tts-flash`
+- `NEXT_PUBLIC_ALIBABA_TTS_VOICE`: voice id, по умолчанию `Serena`
 
-Текущая реализация использует локальный proxy route `POST /api/alibabaChat/`, чтобы не зависеть от браузерных сетевых ограничений и прямого фронтового вызова в Alibaba Cloud.
+Текущая реализация использует локальные proxy routes:
+
+- `POST /api/alibabaChat/`
+- `POST /api/alibabaVision/`
+- `POST /api/alibabaTTS/`
 
 ### Конфигурация OpenRouter
 

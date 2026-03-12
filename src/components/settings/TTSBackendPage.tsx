@@ -8,6 +8,7 @@ const ttsEngines = [
   {key: "elevenlabs", label: "ElevenLabs"},
   {key: "speecht5",   label: "SpeechT5"},
   {key: "openai_tts", label: "OpenAI TTS"},
+  {key: "alibaba_tts", label: "Alibaba Cloud"},
   {key: "localXTTS",  label: "Alltalk TTS"}, // Our local TTS endpoint (XTTS based)
   {key: "piper",      label: "Piper"},
   {key: "coquiLocal", label: "Coqui Local"},
@@ -58,7 +59,7 @@ export function TTSBackendPage({
             </select>
           </FormRow>
         </li>
-        { ["elevenlabs", "speecht5", "openai_tts", "piper", "coquiLocal", "localXTTS", "kokoro"].includes(ttsBackend) && (
+        { ["elevenlabs", "speecht5", "openai_tts", "alibaba_tts", "piper", "coquiLocal", "localXTTS", "kokoro"].includes(ttsBackend) && (
           <li className="py-4">
             <FormRow label={`${t("Configure")} ${t(idToTitle(ttsBackend))}`}>
               <button

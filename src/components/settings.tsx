@@ -49,6 +49,7 @@ import { TTSBackendPage } from './settings/TTSBackendPage';
 import { ElevenLabsSettingsPage } from './settings/ElevenLabsSettingsPage';
 import { SpeechT5SettingsPage } from './settings/SpeechT5SettingsPage';
 import { OpenAITTSSettingsPage } from './settings/OpenAITTSSettingsPage';
+import { AlibabaTTSSettingsPage } from './settings/AlibabaTTSSettingsPage';
 import { PiperSettingsPage } from './settings/PiperSettingsPage';
 import { CoquiLocalSettingsPage } from './settings/CoquiLocalSettingsPage';
 import { LocalXTTSSettingsPage } from "./settings/LocalXTTSSettingsPage";
@@ -65,6 +66,7 @@ import { VisionBackendPage } from './settings/VisionBackendPage';
 import { VisionLlamaCppSettingsPage } from './settings/VisionLlamaCppSettingsPage';
 import { VisionOllamaSettingsPage } from './settings/VisionOllamaSettingsPage';
 import { VisionOpenAISettingsPage } from './settings/VisionOpenAISettingsPage';
+import { VisionAlibabaSettingsPage } from './settings/VisionAlibabaSettingsPage';
 import { VisionSystemPromptPage } from './settings/VisionSystemPromptPage';
 
 import { NamePage } from './settings/NamePage';
@@ -121,6 +123,10 @@ export const Settings = ({
   const [openAITTSUrl, setOpenAITTSUrl] = useState(config("openai_tts_url"));
   const [openAITTSModel, setOpenAITTSModel] = useState(config("openai_tts_model"));
   const [openAITTSVoice, setOpenAITTSVoice] = useState(config("openai_tts_voice"));
+  const [alibabaTTSApiKey, setAlibabaTTSApiKey] = useState(config("alibaba_tts_apikey"));
+  const [alibabaTTSUrl, setAlibabaTTSUrl] = useState(config("alibaba_tts_url"));
+  const [alibabaTTSModel, setAlibabaTTSModel] = useState(config("alibaba_tts_model"));
+  const [alibabaTTSVoice, setAlibabaTTSVoice] = useState(config("alibaba_tts_voice"));
 
   const [piperUrl, setPiperUrl] = useState(config("piper_url"));
 
@@ -151,6 +157,9 @@ export const Settings = ({
   const [visionOpenAIApiKey, setVisionOpenAIApiKey] = useState(config("vision_openai_apikey"));
   const [visionOpenAIUrl, setVisionOpenAIUrl] = useState(config("vision_openai_url"));
   const [visionOpenAIModel, setVisionOpenAIModel] = useState(config("vision_openai_model"));
+  const [visionAlibabaApiKey, setVisionAlibabaApiKey] = useState(config("vision_alibaba_apikey"));
+  const [visionAlibabaUrl, setVisionAlibabaUrl] = useState(config("vision_alibaba_url"));
+  const [visionAlibabaModel, setVisionAlibabaModel] = useState(config("vision_alibaba_model"));
   const [visionSystemPrompt, setVisionSystemPrompt] = useState(config("vision_system_prompt"));
 
   const [bgUrl, setBgUrl] = useState(config("bg_url"));
@@ -290,6 +299,7 @@ export const Settings = ({
     elevenlabsApiKey, elevenlabsVoiceId,
     speechT5SpeakerEmbeddingsUrl,
     openAITTSApiKey, openAITTSUrl, openAITTSModel, openAITTSVoice,
+    alibabaTTSApiKey, alibabaTTSUrl, alibabaTTSModel, alibabaTTSVoice,
     piperUrl,
     rvcUrl,rvcEnabled,rvcModelName,rvcIndexPath,rvcF0upKey,rvcF0Method,rvcIndexRate,rvcFilterRadius,,rvcResampleSr,rvcRmsMixRate,rvcProtect,
     coquiLocalUrl,coquiLocalVoiceId,
@@ -299,6 +309,7 @@ export const Settings = ({
     visionLlamaCppUrl,
     visionOllamaUrl, visionOllamaModel,
     visionOpenAIApiKey, visionOpenAIUrl, visionOpenAIModel,
+    visionAlibabaApiKey, visionAlibabaUrl, visionAlibabaModel,
     visionSystemPrompt,
     bgColor,
     bgUrl, vrmHash, vrmUrl, youtubeVideoID, animationUrl, animationProcedural,
@@ -381,7 +392,7 @@ export const Settings = ({
 
     case 'tts':
       return <MenuPage
-        keys={["tts_backend", "elevenlabs_settings", "speecht5_settings", "coquiLocal_settings", "openai_tts_settings", "piper_settings", "localXTTS_settings", "kokoro_settings", "rvc_settings"]}
+        keys={["tts_backend", "elevenlabs_settings", "speecht5_settings", "coquiLocal_settings", "openai_tts_settings", "alibaba_tts_settings", "piper_settings", "localXTTS_settings", "kokoro_settings", "rvc_settings"]}
         menuClick={handleMenuClick} />;
 
     case 'stt':
@@ -391,7 +402,7 @@ export const Settings = ({
 
     case 'vision':
       return <MenuPage
-        keys={["vision_backend", "vision_llamacpp_settings", "vision_ollama_settings", "vision_openai_settings", "vision_system_prompt"]}
+        keys={["vision_backend", "vision_llamacpp_settings", "vision_ollama_settings", "vision_openai_settings", "vision_alibaba_settings", "vision_system_prompt"]}
         menuClick={handleMenuClick} />;
 
     case 'reset_settings':
@@ -586,6 +597,19 @@ export const Settings = ({
         setSettingsUpdated={setSettingsUpdated}
         />
 
+    case 'alibaba_tts_settings':
+      return <AlibabaTTSSettingsPage
+        alibabaTTSApiKey={alibabaTTSApiKey}
+        setAlibabaTTSApiKey={setAlibabaTTSApiKey}
+        alibabaTTSUrl={alibabaTTSUrl}
+        setAlibabaTTSUrl={setAlibabaTTSUrl}
+        alibabaTTSModel={alibabaTTSModel}
+        setAlibabaTTSModel={setAlibabaTTSModel}
+        alibabaTTSVoice={alibabaTTSVoice}
+        setAlibabaTTSVoice={setAlibabaTTSVoice}
+        setSettingsUpdated={setSettingsUpdated}
+        />
+
     case 'piper_settings':
       return <PiperSettingsPage
         piperUrl={piperUrl}
@@ -718,6 +742,17 @@ export const Settings = ({
         setVisionOpenAIUrl={setVisionOpenAIUrl}
         visionOpenAIModel={visionOpenAIModel}
         setVisionOpenAIModel={setVisionOpenAIModel}
+        setSettingsUpdated={setSettingsUpdated}
+        />
+
+    case 'vision_alibaba_settings':
+      return <VisionAlibabaSettingsPage
+        visionAlibabaApiKey={visionAlibabaApiKey}
+        setVisionAlibabaApiKey={setVisionAlibabaApiKey}
+        visionAlibabaUrl={visionAlibabaUrl}
+        setVisionAlibabaUrl={setVisionAlibabaUrl}
+        visionAlibabaModel={visionAlibabaModel}
+        setVisionAlibabaModel={setVisionAlibabaModel}
         setSettingsUpdated={setSettingsUpdated}
         />
 

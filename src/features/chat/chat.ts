@@ -11,6 +11,7 @@ import {
   getOpenAiChatResponseStream,
   getOpenAiVisionChatResponse,
 } from "./openAiChat";
+import { getAlibabaVisionChatResponse } from "./alibabaVision";
 import {
   getLlamaCppChatResponseStream,
   getLlavaCppChatResponse,
@@ -31,6 +32,7 @@ import { speecht5 } from "@/features/speecht5/speecht5";
 import { openaiTTS } from "@/features/openaiTTS/openaiTTS";
 import { localXTTSTTS } from "@/features/localXTTS/localXTTS";
 import { kokoro } from "../kokoro/kokoro";
+import { alibabaTTS } from "@/features/alibabaTTS/alibabaTTS";
 
 import { AmicaLife } from "@/features/amicaLife/amicaLife";
 
@@ -694,6 +696,13 @@ export class Chat {
           }
           return voice.audio;
         }
+        case "alibaba_tts": {
+          const voice = await alibabaTTS(talk.message);
+          if (rvcEnabled) {
+            return await this.handleRvc(voice.audio);
+          }
+          return voice.audio;
+        }
         case "localXTTS": {
           const voice = await localXTTSTTS(talk.message);
           if (rvcEnabled) {
@@ -811,6 +820,29 @@ export class Chat {
         ];
 
         res = await getOpenAiVisionChatResponse(messages);
+      } else if (visionBackend === "vision_alibaba") {
+        const messages: Message[] = [
+          { role: "user", content: config("vision_system_prompt") },
+          ...this.messageList! as any[],
+          {
+            role: "user",
+            // @ts-ignore normally this is a string
+            content: [
+              {
+                type: "text",
+                text: "Describe the image as accurately as possible",
+              },
+              {
+                type: "image_url",
+                image_url: {
+                  url: `data:image/jpeg;base64,${imageData}`,
+                },
+              },
+            ],
+          },
+        ];
+
+        res = await getAlibabaVisionChatResponse(messages);
       } else {
         console.warn("vision_backend not supported", visionBackend);
         return;

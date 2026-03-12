@@ -172,6 +172,7 @@ export function getIconFromPage(page: string): JSX.Element {
     case 'elevenlabs_settings': return <AdjustmentsHorizontalIcon className="h-5 w-5 flex-none text-gray-800" aria-hidden="true" />;
     case 'speecht5_settings':   return <AdjustmentsHorizontalIcon className="h-5 w-5 flex-none text-gray-800" aria-hidden="true" />;
     case 'openai_tts_settings': return <AdjustmentsHorizontalIcon className="h-5 w-5 flex-none text-gray-800" aria-hidden="true" />;
+    case 'alibaba_tts_settings': return <AdjustmentsHorizontalIcon className="h-5 w-5 flex-none text-gray-800" aria-hidden="true" />;
     case 'piper_settings':      return <AdjustmentsHorizontalIcon className="h-5 w-5 flex-none text-gray-800" aria-hidden="true" />;
     case 'rvc_settings':        return <CogIcon className="h-5 w-5 flex-none text-gray-800" aria-hidden="true" />;
     case 'coquiLocal_settings': return <AdjustmentsHorizontalIcon className="h-5 w-5 flex-none text-gray-800" aria-hidden="true" />;
@@ -187,6 +188,7 @@ export function getIconFromPage(page: string): JSX.Element {
     case 'vision_llamacpp_settings': return <AdjustmentsHorizontalIcon className="h-5 w-5 flex-none text-gray-800" aria-hidden="true" />;
     case 'vision_ollama_settings':   return <AdjustmentsHorizontalIcon className="h-5 w-5 flex-none text-gray-800" aria-hidden="true" />;
     case 'vision_openai_settings':   return <AdjustmentsHorizontalIcon className="h-5 w-5 flex-none text-gray-800" aria-hidden="true" />;
+    case 'vision_alibaba_settings':  return <AdjustmentsHorizontalIcon className="h-5 w-5 flex-none text-gray-800" aria-hidden="true" />;
     case 'vision_system_prompt':     return <DocumentTextIcon className="h-5 w-5 flex-none text-gray-800" aria-hidden="true" />;
   }
 
@@ -230,6 +232,7 @@ function getLabelFromPage(page: string): string {
     case 'elevenlabs_settings': return t('ElevenLabs');
     case 'speecht5_settings':   return t('SpeechT5');
     case 'openai_tts_settings': return t('OpenAI');
+    case 'alibaba_tts_settings': return t('Alibaba Cloud');
     case 'piper_settings':      return t('Piper');
     case 'rvc_settings':        return t('RVC');
     case 'coquiLocal_settings': return t('Coqui Local');
@@ -240,6 +243,7 @@ function getLabelFromPage(page: string): string {
     case 'vision_llamacpp_settings': return t('LLama.cpp');
     case 'vision_ollama_settings':   return t('Ollama');
     case 'vision_openai_settings':   return t('OpenAI');
+    case 'vision_alibaba_settings':  return t('Alibaba Cloud');
     case 'vision_system_prompt':     return t('System Prompt');
 
     case 'stt_backend':             return t('STT Backend');

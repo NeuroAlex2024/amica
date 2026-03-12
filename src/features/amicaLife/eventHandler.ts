@@ -13,6 +13,7 @@ import { Viewer } from "../vrmViewer/viewer";
 import { config } from "@/utils/config";
 import isDev from "@/utils/isDev";
 import { handleSubconscious } from "../externalAPI/externalAPI";
+import { normalizeLanguage } from "@/utils/languageDefaults";
 
 export const idleEvents = [
   "VRMA",
@@ -54,6 +55,36 @@ export function resetStoredSubconcious() {
 }
 
 let previousAnimation = "";
+
+function getSubconsciousPrompts() {
+  const language = normalizeLanguage(config("language"));
+
+  if (language === "ru") {
+    return {
+      diary:
+        "Кратко осмысли этот диалог как личную запись в дневнике о том, что произошло и что ты почувствовала:",
+      emotion:
+        "Прочитай эту мини-запись и кратко опиши внутреннее эмоциональное состояние с позиции наблюдателя:",
+      spoken:
+        `На основе мини-записи ответь одной-двумя короткими разговорными репликами от лица Амики. Ответ должен быть строго на русском языке, естественным, личным, милым и кратким. Реплика должна быть по теме недавнего разговора или мягко продолжать его. Если подходящей темы нет, Амика должна нежно и уместно позвать пользователя к общению, как милая заинтересованная девушка. Не говори случайные факты и не меняй тему без причины. Обязательно используй теги эмоций из списка: ${emotions
+          .map((emotion) => `[${emotion}]`)
+          .join(", ")}:`,
+      compress: "Сожми этот текст до 240 символов на русском языке:",
+    };
+  }
+
+  return {
+    diary:
+      "Please briefly reflect on this conversation as a personal diary entry about what happened and how you felt:",
+    emotion:
+      "Read this mini-diary and briefly describe the internal emotional state from a third-person perspective:",
+    spoken:
+      `Based on this mini-diary, reply as Amica in one or two short conversational sentences. Keep it personal, natural, sweet, and brief. The reply should stay relevant to the recent conversation or gently continue it. If there is no clear topic, Amica should softly invite the user back into the conversation like a cute, interested girl. Do not say random facts and do not abruptly change the subject. You must include emotion tags from this list: ${emotions
+        .map((emotion) => `[${emotion}]`)
+        .join(", ")}:`,
+    compress: "Compress this prompt to 240 characters:",
+  };
+}
 
 // Handles the VRM animation event.
 
@@ -148,10 +179,12 @@ export async function handleSubconsciousEvent(
     })
     .join("\n");
 
+  const prompts = getSubconsciousPrompts();
+
   try {
     // Step 1: Simulate subconscious self mental diary
     const subconciousWordSalad = await askLLM(
-      "Please reflect on the conversation and let your thoughts flow freely, as if writing a personal diary with events that have occurred:",
+      prompts.diary,
       `${convoLog}`,
       null,
     );
@@ -163,7 +196,7 @@ export async function handleSubconsciousEvent(
       ? convoLog
       : subconciousWordSalad;
     const decipherEmotion = await askLLM(
-      "Read this mini-diary, I would like you to simulate a human-like subconscious with deep emotions and describe it from a third-person perspective:",
+      prompts.emotion,
       secondStepPrompt,
       null,
     );
@@ -176,9 +209,7 @@ export async function handleSubconsciousEvent(
       ? convoLog
       : decipherEmotion;
     const emotionDecided = await askLLM(
-      `Based on your mini-diary, respond with dialougue that sounds like a normal person speaking about their mind, experience or feelings. Make sure to incorporate the specified emotion tags in your response. Here is the list of emotion tags that you have to include in the result : ${emotions
-        .map((emotion) => `[${emotion}]`)
-        .join(", ")}:`,
+      prompts.spoken,
       thirdStepPrompt,
       chat,
     );
@@ -191,7 +222,7 @@ export async function handleSubconsciousEvent(
       ? convoLog
       : subconciousWordSalad;
     const compressSubconcious = await askLLM(
-      "Compress this prompt to 240 characters:",
+      prompts.compress,
       fourthStepPrompt,
       null,
     );

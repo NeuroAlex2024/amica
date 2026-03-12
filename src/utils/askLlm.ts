@@ -8,6 +8,7 @@ import { getWindowAiChatResponseStream } from "@/features/chat/windowAiChat";
 import { getOllamaChatResponseStream, getOllamaVisionChatResponse } from "@/features/chat/ollamaChat";
 import { getKoboldAiChatResponseStream } from "@/features/chat/koboldAiChat";
 import { getAlibabaChatResponseStream } from "@/features/chat/alibabaChat";
+import { getAlibabaVisionChatResponse } from "@/features/chat/alibabaVision";
 
 import { config } from "@/utils/config";
 import { processResponse } from "@/utils/processResponse";
@@ -199,6 +200,28 @@ export async function askVisionLLM(
       res = await getLlavaCppChatResponse(messages, imageData);
     } else if (visionBackend === "vision_ollama") {
       res = await getOllamaVisionChatResponse(messages, imageData);
+    } else if (visionBackend === "vision_alibaba") {
+      const visionMessages: Message[] = [
+        { role: "user", content: config("vision_system_prompt") },
+        {
+          role: "user",
+          // @ts-ignore normally this is a string
+          content: [
+            {
+              type: "text",
+              text: "Describe the image as accurately as possible",
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:image/jpeg;base64,${imageData}`,
+              },
+            },
+          ],
+        },
+      ];
+
+      res = await getAlibabaVisionChatResponse(visionMessages);
     } else {
       console.warn("vision_backend not supported", visionBackend);
       return "vision_backend not supported";

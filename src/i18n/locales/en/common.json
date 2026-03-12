@@ -94,6 +94,7 @@
   "OpenAI TTS": "OpenAI TTS",
   "OpenAI_tts_desc": "Configure OpenAI TTS",
   "Alibaba_Cloud_desc": "Configure Alibaba Cloud Model Studio chat settings. Use the Singapore compatible-mode base URL if you want to connect through DashScope International.",
+  "Alibaba_Cloud_Vision_desc": "Configure Alibaba Cloud vision settings. Use the Singapore compatible-mode base URL and a multimodal model such as qwen3.5-plus.",
   "Voice": "Voice",
   "Thinking Mode": "Thinking Mode",
   "Reset All Settings": "Reset All Settings",

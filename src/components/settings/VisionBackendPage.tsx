@@ -8,6 +8,7 @@ const visionEngines = [
   {key: "vision_llamacpp", label: "LLama.cpp"},
   {key: "vision_ollama",   label: "Ollama"},
   {key: "vision_openai",   label: "OpenAI"},
+  {key: "vision_alibaba",  label: "Alibaba Cloud"},
 ];
 
 function idToTitle(id: string): string {
@@ -54,7 +55,7 @@ export function VisionBackendPage({
             </select>
           </FormRow>
         </li>
-        { ["vision_llamacpp", "vision_ollama", "vision_openai"].includes(visionBackend) && (
+        { ["vision_llamacpp", "vision_ollama", "vision_openai", "vision_alibaba"].includes(visionBackend) && (
           <li className="py-4">
             <FormRow label={`${t("Configure")} ${t(idToTitle(visionBackend))}`}>
               <button
