@@ -21,9 +21,13 @@
 
 Для этого репозитория действует простое правило рабочего контура:
 
-- если Lex просит "запушить на GitHub", это означает прямой push в `main`
-- отдельный PR для уже проверенных локально изменений по умолчанию не нужен
-- если нужен именно PR вместо прямого push, это должно быть явно сказано в задаче
+- если Lex просит "запушить на GitHub", это означает подготовить отдельную ветку, открыть `Pull Request` и прислать ссылку на PR
+- в описании PR нужно кратко перечислить, что изменено и что проверено
+- прямой push в `main` по умолчанию не используется
+- рабочая схема веток:
+  - `main` для production
+  - `preview` для стабильного test-стенда на Vercel
+  - `feature/...` для обычных задач и PR
 
 ## План работ по AmicaV1
 
@@ -207,7 +211,7 @@ npm ci
 - TTS backend: `Alibaba Cloud`
 - Alibaba TTS URL: `https://dashscope-intl.aliyuncs.com`
 - Alibaba TTS Model: `qwen3-tts-flash`
-- Alibaba TTS Voice: `Serena` или другой voice id из настроек
+- Alibaba TTS Voice: `Chelsie` или другой voice id из настроек
 - STT backend: `Whisper (OpenAI)`
 - Whisper Model: `whisper-1`
 
@@ -224,7 +228,7 @@ npm ci
 - `NEXT_PUBLIC_VISION_ALIBABA_USE_SERVER_KEY`: `true` если vision-ключ должен браться только с сервера
 - `NEXT_PUBLIC_ALIBABA_TTS_URL`: базовый URL TTS API, по умолчанию `https://dashscope-intl.aliyuncs.com`
 - `NEXT_PUBLIC_ALIBABA_TTS_MODEL`: модель TTS, по умолчанию `qwen3-tts-flash`
-- `NEXT_PUBLIC_ALIBABA_TTS_VOICE`: voice id, по умолчанию `Serena`
+- `NEXT_PUBLIC_ALIBABA_TTS_VOICE`: voice id, по умолчанию `Chelsie`
 - `NEXT_PUBLIC_ALIBABA_TTS_USE_SERVER_KEY`: `true` если TTS-ключ должен браться только с сервера
 
 Для Vercel production-сценария, где пользователи не видят ваши ключи, использовать нужно обычные server-side env vars без `NEXT_PUBLIC_`:
@@ -263,10 +267,32 @@ npm ci
    - `NEXT_PUBLIC_VISION_ALIBABA_MODEL=qwen3.5-plus`
    - `NEXT_PUBLIC_ALIBABA_TTS_URL=https://dashscope-intl.aliyuncs.com`
    - `NEXT_PUBLIC_ALIBABA_TTS_MODEL=qwen3-tts-flash`
-   - `NEXT_PUBLIC_ALIBABA_TTS_VOICE=Serena`
+   - `NEXT_PUBLIC_ALIBABA_TTS_VOICE=Chelsie`
 5. Задеплоить проект.
 
 После деплоя в настройках Alibaba Cloud включенный `Use server key` означает, что реальный API key скрыт от клиента и используется только в server-side proxy route.
+
+### Preview Workflow Для Vercel
+
+Чтобы получить одну стабильную тестовую ссылку и сохранить локальные настройки браузера между сборками:
+
+1. Использовать отдельный Vercel project `amica-ru-test`.
+2. Подключить этот проект к тому же репозиторию `NeuroAlex2024/amica`.
+3. Держать постоянную ветку `preview` на GitHub.
+4. В `Vercel -> amica-ru-test -> Settings -> Domains` привязать `amica-ru-test.vercel.app` к:
+   - `Connect to an environment`
+   - `Preview`
+   - ветке `preview`
+5. Работать по схеме:
+   - `feature/...` -> PR в `preview`, если нужно обновить стабильный тестовый стенд
+   - тестирование на `amica-ru-test.vercel.app`
+   - отдельный PR из `preview` в `main`, когда изменения готовы для production
+
+Это дает:
+
+- стабильный test URL
+- сохранение `localStorage` на одном и том же домене между новыми сборками `preview`
+- отдельный production-контур на `main`
 
 ### Конфигурация OpenRouter
 
