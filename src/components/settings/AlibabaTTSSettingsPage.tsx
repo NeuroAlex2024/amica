@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { BasicPage, FormRow, NotUsingAlert } from './common';
 import { TextInput } from '@/components/textInput';
 import { SecretTextInput } from '@/components/secretTextInput';
+import { SwitchBox } from '@/components/switchBox';
 import { config, updateConfig } from '@/utils/config';
 
 const alibabaTTSVoices = [
@@ -23,6 +24,8 @@ export function AlibabaTTSSettingsPage({
   setAlibabaTTSModel,
   alibabaTTSVoice,
   setAlibabaTTSVoice,
+  alibabaTTSUseServerKey,
+  setAlibabaTTSUseServerKey,
   setSettingsUpdated,
 }: {
   alibabaTTSApiKey: string;
@@ -33,6 +36,8 @@ export function AlibabaTTSSettingsPage({
   setAlibabaTTSModel: (model: string) => void;
   alibabaTTSVoice: string;
   setAlibabaTTSVoice: (voice: string) => void;
+  alibabaTTSUseServerKey: boolean;
+  setAlibabaTTSUseServerKey: (enabled: boolean) => void;
   setSettingsUpdated: (updated: boolean) => void;
 }) {
   const { t } = useTranslation();
@@ -55,17 +60,30 @@ export function AlibabaTTSSettingsPage({
       )}
       <ul role="list" className="divide-y divide-gray-100 max-w-xs">
         <li className="py-4">
-          <FormRow label={t('API Key')}>
-            <SecretTextInput
-              value={alibabaTTSApiKey}
-              onChange={(event: React.ChangeEvent<any>) => {
-                setAlibabaTTSApiKey(event.target.value);
-                updateConfig('alibaba_tts_apikey', event.target.value);
-                setSettingsUpdated(true);
-              }}
-            />
-          </FormRow>
+          <SwitchBox
+            value={alibabaTTSUseServerKey}
+            label={t('Use server key', 'Use server key')}
+            onChange={(value: boolean) => {
+              setAlibabaTTSUseServerKey(value);
+              updateConfig('alibaba_tts_use_server_key', value ? 'true' : 'false');
+              setSettingsUpdated(true);
+            }}
+          />
         </li>
+        {!alibabaTTSUseServerKey && (
+          <li className="py-4">
+            <FormRow label={t('API Key')}>
+              <SecretTextInput
+                value={alibabaTTSApiKey}
+                onChange={(event: React.ChangeEvent<any>) => {
+                  setAlibabaTTSApiKey(event.target.value);
+                  updateConfig('alibaba_tts_apikey', event.target.value);
+                  setSettingsUpdated(true);
+                }}
+              />
+            </FormRow>
+          </li>
+        )}
         <li className="py-4">
           <FormRow label={t('API URL')}>
             <TextInput

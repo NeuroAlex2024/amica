@@ -1,6 +1,9 @@
+import { config } from '@/utils/config';
+
 export async function alibabaTTS(
   message: string,
 ) {
+  const useServerKey = config('alibaba_tts_use_server_key') === 'true';
   const res = await fetch('/api/alibabaTTS/', {
     method: 'POST',
     headers: {
@@ -8,6 +11,12 @@ export async function alibabaTTS(
     },
     body: JSON.stringify({
       text: message,
+      apiKey: useServerKey ? undefined : config('alibaba_tts_apikey'),
+      useServerKey,
+      url: config('alibaba_tts_url'),
+      model: config('alibaba_tts_model'),
+      voice: config('alibaba_tts_voice'),
+      language: config('language'),
     }),
   });
 

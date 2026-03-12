@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { BasicPage, FormRow, NotUsingAlert } from "./common";
 import { TextInput } from "@/components/textInput";
 import { SecretTextInput } from "@/components/secretTextInput";
+import { SwitchBox } from '@/components/switchBox';
 import { config, updateConfig } from "@/utils/config";
 
 export function VisionAlibabaSettingsPage({
@@ -12,6 +13,8 @@ export function VisionAlibabaSettingsPage({
   setVisionAlibabaUrl,
   visionAlibabaModel,
   setVisionAlibabaModel,
+  visionAlibabaUseServerKey,
+  setVisionAlibabaUseServerKey,
   setSettingsUpdated,
 }: {
   visionAlibabaApiKey: string;
@@ -20,6 +23,8 @@ export function VisionAlibabaSettingsPage({
   setVisionAlibabaUrl: (url: string) => void;
   visionAlibabaModel: string;
   setVisionAlibabaModel: (url: string) => void;
+  visionAlibabaUseServerKey: boolean;
+  setVisionAlibabaUseServerKey: (enabled: boolean) => void;
   setSettingsUpdated: (updated: boolean) => void;
 }) {
   const { t } = useTranslation();
@@ -38,18 +43,31 @@ export function VisionAlibabaSettingsPage({
       ) }
       <ul role="list" className="divide-y divide-gray-100 max-w-xs">
         <li className="py-4">
-          <FormRow label={t("API Key")}>
-            <SecretTextInput
-              value={visionAlibabaApiKey}
-              onChange={(event: React.ChangeEvent<any>) => {
-                event.preventDefault();
-                setVisionAlibabaApiKey(event.target.value);
-                updateConfig("vision_alibaba_apikey", event.target.value);
-                setSettingsUpdated(true);
-              }}
-            />
-          </FormRow>
+          <SwitchBox
+            value={visionAlibabaUseServerKey}
+            label={t("Use server key", "Use server key")}
+            onChange={(value: boolean) => {
+              setVisionAlibabaUseServerKey(value);
+              updateConfig("vision_alibaba_use_server_key", value ? "true" : "false");
+              setSettingsUpdated(true);
+            }}
+          />
         </li>
+        {!visionAlibabaUseServerKey && (
+          <li className="py-4">
+            <FormRow label={t("API Key")}>
+              <SecretTextInput
+                value={visionAlibabaApiKey}
+                onChange={(event: React.ChangeEvent<any>) => {
+                  event.preventDefault();
+                  setVisionAlibabaApiKey(event.target.value);
+                  updateConfig("vision_alibaba_apikey", event.target.value);
+                  setSettingsUpdated(true);
+                }}
+              />
+            </FormRow>
+          </li>
+        )}
         <li className="py-4">
           <FormRow label={t("API URL")}>
             <TextInput

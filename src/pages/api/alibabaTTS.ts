@@ -42,11 +42,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const storedConfig = handleGetConfig();
-  const getValue = (key: string, fallback: string) => {
+  const getStoredValue = (key: string, fallback: string) => {
     return storedConfig?.[key] ?? fallback;
   };
 
-  const apiKey = getValue('alibaba_tts_apikey', getValue('alibaba_apikey', ''));
+  const useServerKey = req.body?.useServerKey === true;
+  const serverKey = process.env.ALIBABA_TTS_APIKEY || process.env.ALIBABA_APIKEY || process.env.NEXT_PUBLIC_ALIBABA_TTS_APIKEY || process.env.NEXT_PUBLIC_ALIBABA_APIKEY || '';
+  const apiKey = useServerKey
+    ? serverKey
+    : req.body?.apiKey || getStoredValue('alibaba_tts_apikey', getStoredValue('alibaba_apikey', serverKey));
   if (!apiKey) {
     return res.status(400).json({ error: 'Alibaba Cloud TTS API key is required' });
   }
@@ -57,7 +61,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const baseUrl = getValue('alibaba_tts_url', 'https://dashscope-intl.aliyuncs.com').replace(/\/+$/, '');
+    const baseUrl = (req.body?.url || getStoredValue('alibaba_tts_url', 'https://dashscope-intl.aliyuncs.com')).replace(/\/+$/, '');
+    const model = req.body?.model || getStoredValue('alibaba_tts_model', 'qwen3-tts-flash');
+    const voice = req.body?.voice || getStoredValue('alibaba_tts_voice', 'Serena') || 'Serena';
+    const language = req.body?.language || getStoredValue('language', 'en');
+
     const response = await fetch(`${baseUrl}/api/v1/services/aigc/multimodal-generation/generation`, {
       method: 'POST',
       headers: {
@@ -66,11 +74,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         'X-DashScope-Async': 'disable',
       },
       body: JSON.stringify({
-        model: getValue('alibaba_tts_model', 'qwen3-tts-flash'),
+        model,
         input: {
           text: text.trim(),
-          voice: getValue('alibaba_tts_voice', 'Serena') || 'Serena',
-          language_type: getAlibabaLanguageType(getValue('language', 'en')),
+          voice,
+          language_type: getAlibabaLanguageType(language),
         },
         parameters: {
           sample_rate: 24000,

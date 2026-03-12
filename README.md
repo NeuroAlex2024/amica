@@ -215,23 +215,58 @@ npm ci
 
 Чтобы использовать Alibaba Cloud в текущем стеке, задай следующие переменные в `.env.local`:
 
-- `NEXT_PUBLIC_ALIBABA_APIKEY`: API key Alibaba Cloud Model Studio для чата и общий fallback
 - `NEXT_PUBLIC_ALIBABA_URL`: базовый URL compatible-mode, для Singapore `https://dashscope-intl.aliyuncs.com/compatible-mode`
 - `NEXT_PUBLIC_ALIBABA_MODEL`: модель чата, например `qwen3.5-flash`
 - `NEXT_PUBLIC_ALIBABA_ENABLE_THINKING`: `true` или `false`
-- `NEXT_PUBLIC_VISION_ALIBABA_APIKEY`: отдельный API key для vision, если нужен
+- `NEXT_PUBLIC_ALIBABA_USE_SERVER_KEY`: `true` если ключ должен браться только с сервера
 - `NEXT_PUBLIC_VISION_ALIBABA_URL`: URL vision compatible-mode, по умолчанию `https://dashscope-intl.aliyuncs.com/compatible-mode`
 - `NEXT_PUBLIC_VISION_ALIBABA_MODEL`: модель vision, по умолчанию `qwen3.5-plus`
-- `NEXT_PUBLIC_ALIBABA_TTS_APIKEY`: отдельный API key для TTS, если нужен
+- `NEXT_PUBLIC_VISION_ALIBABA_USE_SERVER_KEY`: `true` если vision-ключ должен браться только с сервера
 - `NEXT_PUBLIC_ALIBABA_TTS_URL`: базовый URL TTS API, по умолчанию `https://dashscope-intl.aliyuncs.com`
 - `NEXT_PUBLIC_ALIBABA_TTS_MODEL`: модель TTS, по умолчанию `qwen3-tts-flash`
 - `NEXT_PUBLIC_ALIBABA_TTS_VOICE`: voice id, по умолчанию `Serena`
+- `NEXT_PUBLIC_ALIBABA_TTS_USE_SERVER_KEY`: `true` если TTS-ключ должен браться только с сервера
+
+Для Vercel production-сценария, где пользователи не видят ваши ключи, использовать нужно обычные server-side env vars без `NEXT_PUBLIC_`:
+
+- `ALIBABA_APIKEY`
+- `VISION_ALIBABA_APIKEY` опционально
+- `ALIBABA_TTS_APIKEY` опционально
 
 Текущая реализация использует локальные proxy routes:
 
 - `POST /api/alibabaChat/`
 - `POST /api/alibabaVision/`
 - `POST /api/alibabaTTS/`
+
+### Deploy На Vercel
+
+Для интернет-версии, где друзья пользуются вашим деплоем, а Alibaba Cloud оплачиваете вы:
+
+1. Запушить проект в GitHub.
+2. Импортировать репозиторий в Vercel как `Next.js` project.
+3. Добавить server env vars:
+   - `ALIBABA_APIKEY`
+   - `VISION_ALIBABA_APIKEY` опционально
+   - `ALIBABA_TTS_APIKEY` опционально
+4. Добавить public env vars:
+   - `NEXT_PUBLIC_CHATBOT_BACKEND=alibaba`
+   - `NEXT_PUBLIC_VISION_BACKEND=vision_alibaba`
+   - `NEXT_PUBLIC_TTS_BACKEND=alibaba_tts`
+   - `NEXT_PUBLIC_ALIBABA_USE_SERVER_KEY=true`
+   - `NEXT_PUBLIC_VISION_ALIBABA_USE_SERVER_KEY=true`
+   - `NEXT_PUBLIC_ALIBABA_TTS_USE_SERVER_KEY=true`
+   - `NEXT_PUBLIC_ALIBABA_URL=https://dashscope-intl.aliyuncs.com/compatible-mode`
+   - `NEXT_PUBLIC_ALIBABA_MODEL=qwen3.5-flash`
+   - `NEXT_PUBLIC_ALIBABA_ENABLE_THINKING=false`
+   - `NEXT_PUBLIC_VISION_ALIBABA_URL=https://dashscope-intl.aliyuncs.com/compatible-mode`
+   - `NEXT_PUBLIC_VISION_ALIBABA_MODEL=qwen3.5-plus`
+   - `NEXT_PUBLIC_ALIBABA_TTS_URL=https://dashscope-intl.aliyuncs.com`
+   - `NEXT_PUBLIC_ALIBABA_TTS_MODEL=qwen3-tts-flash`
+   - `NEXT_PUBLIC_ALIBABA_TTS_VOICE=Serena`
+5. Задеплоить проект.
+
+После деплоя в настройках Alibaba Cloud включенный `Use server key` означает, что реальный API key скрыт от клиента и используется только в server-side proxy route.
 
 ### Конфигурация OpenRouter
 

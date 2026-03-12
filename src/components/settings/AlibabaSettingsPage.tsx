@@ -15,6 +15,8 @@ export function AlibabaSettingsPage({
   setAlibabaModel,
   alibabaEnableThinking,
   setAlibabaEnableThinking,
+  alibabaUseServerKey,
+  setAlibabaUseServerKey,
   setSettingsUpdated,
 }: {
   alibabaApiKey: string;
@@ -25,6 +27,8 @@ export function AlibabaSettingsPage({
   setAlibabaModel: (model: string) => void;
   alibabaEnableThinking: boolean;
   setAlibabaEnableThinking: (enabled: boolean) => void;
+  alibabaUseServerKey: boolean;
+  setAlibabaUseServerKey: (enabled: boolean) => void;
   setSettingsUpdated: (updated: boolean) => void;
 }) {
   const { t } = useTranslation();
@@ -47,17 +51,30 @@ export function AlibabaSettingsPage({
       )}
       <ul role="list" className="divide-y divide-gray-100 max-w-xs">
         <li className="py-4">
-          <FormRow label={t("API Key")}>
-            <SecretTextInput
-              value={alibabaApiKey}
-              onChange={(event: React.ChangeEvent<any>) => {
-                setAlibabaApiKey(event.target.value);
-                updateConfig("alibaba_apikey", event.target.value);
-                setSettingsUpdated(true);
-              }}
-            />
-          </FormRow>
+          <SwitchBox
+            value={alibabaUseServerKey}
+            label={t("Use server key", "Use server key")}
+            onChange={(value: boolean) => {
+              setAlibabaUseServerKey(value);
+              updateConfig("alibaba_use_server_key", value ? "true" : "false");
+              setSettingsUpdated(true);
+            }}
+          />
         </li>
+        {!alibabaUseServerKey && (
+          <li className="py-4">
+            <FormRow label={t("API Key")}>
+              <SecretTextInput
+                value={alibabaApiKey}
+                onChange={(event: React.ChangeEvent<any>) => {
+                  setAlibabaApiKey(event.target.value);
+                  updateConfig("alibaba_apikey", event.target.value);
+                  setSettingsUpdated(true);
+                }}
+              />
+            </FormRow>
+          </li>
+        )}
         <li className="py-4">
           <FormRow label={t("API URL")}>
             <TextInput

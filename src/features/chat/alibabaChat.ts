@@ -1,6 +1,8 @@
 import { Message } from './messages';
+import { config } from '@/utils/config';
 
 export async function getAlibabaChatResponseStream(messages: Message[]): Promise<ReadableStream> {
+  const useServerKey = config('alibaba_use_server_key') === 'true';
   const response = await fetch('/api/alibabaChat/', {
     method: 'POST',
     headers: {
@@ -8,6 +10,11 @@ export async function getAlibabaChatResponseStream(messages: Message[]): Promise
     },
     body: JSON.stringify({
       messages,
+      apiKey: useServerKey ? undefined : config('alibaba_apikey'),
+      useServerKey,
+      url: config('alibaba_url'),
+      model: config('alibaba_model'),
+      enableThinking: config('alibaba_enable_thinking') === 'true',
     }),
   });
 

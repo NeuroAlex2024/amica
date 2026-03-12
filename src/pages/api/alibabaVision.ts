@@ -16,11 +16,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const storedConfig = handleGetConfig();
-  const getValue = (key: string, fallback: string) => {
+  const getStoredValue = (key: string, fallback: string) => {
     return storedConfig?.[key] ?? fallback;
   };
 
-  const apiKey = getValue('vision_alibaba_apikey', getValue('alibaba_apikey', ''));
+  const useServerKey = req.body?.useServerKey === true;
+  const serverKey = process.env.VISION_ALIBABA_APIKEY || process.env.ALIBABA_APIKEY || process.env.NEXT_PUBLIC_VISION_ALIBABA_APIKEY || process.env.NEXT_PUBLIC_ALIBABA_APIKEY || '';
+  const apiKey = useServerKey
+    ? serverKey
+    : req.body?.apiKey || getStoredValue('vision_alibaba_apikey', getStoredValue('alibaba_apikey', serverKey));
   if (!apiKey) {
     return res.status(400).json({ error: 'Alibaba Cloud Vision API key is required' });
   }
@@ -31,7 +35,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const response = await fetch(`${getValue('vision_alibaba_url', getValue('alibaba_url', 'https://dashscope-intl.aliyuncs.com/compatible-mode'))}/v1/chat/completions`, {
+    const url = (req.body?.url || getStoredValue('vision_alibaba_url', getStoredValue('alibaba_url', 'https://dashscope-intl.aliyuncs.com/compatible-mode'))).replace(/\/+$/, '');
+    const model = req.body?.model || getStoredValue('vision_alibaba_model', 'qwen3.5-plus');
+
+    const response = await fetch(`${url}/v1/chat/completions`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -40,7 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         'X-Title': 'Amica Vision',
       },
       body: JSON.stringify({
-        model: getValue('vision_alibaba_model', 'qwen3.5-plus'),
+        model,
         messages: messages.map(({ role, content }) => ({ role, content })),
         stream: true,
         max_tokens: 200,

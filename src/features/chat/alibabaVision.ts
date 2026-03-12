@@ -1,6 +1,8 @@
 import { Message } from './messages';
+import { config } from '@/utils/config';
 
 export async function getAlibabaVisionChatResponse(messages: Message[]): Promise<string> {
+  const useServerKey = config('vision_alibaba_use_server_key') === 'true';
   const response = await fetch('/api/alibabaVision/', {
     method: 'POST',
     headers: {
@@ -8,6 +10,10 @@ export async function getAlibabaVisionChatResponse(messages: Message[]): Promise
     },
     body: JSON.stringify({
       messages,
+      apiKey: useServerKey ? undefined : config('vision_alibaba_apikey'),
+      useServerKey,
+      url: config('vision_alibaba_url'),
+      model: config('vision_alibaba_model'),
     }),
   });
 

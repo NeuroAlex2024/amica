@@ -31,11 +31,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const storedConfig = handleGetConfig();
-  const getValue = (key: string, fallback: string) => {
+  const getStoredValue = (key: string, fallback: string) => {
     return storedConfig?.[key] ?? fallback;
   };
 
-  const apiKey = getValue('alibaba_apikey', '');
+  const useServerKey = req.body?.useServerKey === true;
+  const apiKey = useServerKey
+    ? process.env.ALIBABA_APIKEY || process.env.NEXT_PUBLIC_ALIBABA_APIKEY || ''
+    : req.body?.apiKey || getStoredValue('alibaba_apikey', process.env.ALIBABA_APIKEY || process.env.NEXT_PUBLIC_ALIBABA_APIKEY || '');
   if (!apiKey) {
     return res.status(400).json({ error: 'Alibaba Cloud API key is required' });
   }
@@ -46,7 +49,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const response = await fetch(`${getValue('alibaba_url', 'https://dashscope-intl.aliyuncs.com/compatible-mode')}/v1/chat/completions`, {
+    const url = (req.body?.url || getStoredValue('alibaba_url', 'https://dashscope-intl.aliyuncs.com/compatible-mode')).replace(/\/+$/, '');
+    const model = req.body?.model || getStoredValue('alibaba_model', 'qwen3.5-flash');
+    const enableThinking = req.body?.enableThinking === true || getStoredValue('alibaba_enable_thinking', 'false') === 'true';
+
+    const response = await fetch(`${url}/v1/chat/completions`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -55,10 +62,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         'X-Title': 'Amica Chat',
       },
       body: JSON.stringify({
-        model: getValue('alibaba_model', 'qwen3.5-flash'),
+        model,
         messages: buildAlibabaMessages(messages).map(({ role, content }) => ({ role, content })),
         stream: true,
-        enable_thinking: getValue('alibaba_enable_thinking', 'false') === 'true',
+        enable_thinking: enableThinking,
         max_tokens: 120,
       }),
     });

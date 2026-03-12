@@ -101,6 +101,7 @@ export const Settings = ({
   const [alibabaUrl, setAlibabaUrl] = useState(config("alibaba_url"));
   const [alibabaModel, setAlibabaModel] = useState(config("alibaba_model"));
   const [alibabaEnableThinking, setAlibabaEnableThinking] = useState<boolean>(config("alibaba_enable_thinking") === 'true');
+  const [alibabaUseServerKey, setAlibabaUseServerKey] = useState<boolean>(config("alibaba_use_server_key") === 'true');
   const [llamaCppUrl, setLlamaCppUrl] = useState(config("llamacpp_url"));
   const [llamaCppStopSequence, setLlamaCppStopSequence] = useState(config("llamacpp_stop_sequence"));
   const [ollamaUrl, setOllamaUrl] = useState(config("ollama_url"));
@@ -127,6 +128,7 @@ export const Settings = ({
   const [alibabaTTSUrl, setAlibabaTTSUrl] = useState(config("alibaba_tts_url"));
   const [alibabaTTSModel, setAlibabaTTSModel] = useState(config("alibaba_tts_model"));
   const [alibabaTTSVoice, setAlibabaTTSVoice] = useState(config("alibaba_tts_voice"));
+  const [alibabaTTSUseServerKey, setAlibabaTTSUseServerKey] = useState<boolean>(config("alibaba_tts_use_server_key") === 'true');
 
   const [piperUrl, setPiperUrl] = useState(config("piper_url"));
 
@@ -160,6 +162,7 @@ export const Settings = ({
   const [visionAlibabaApiKey, setVisionAlibabaApiKey] = useState(config("vision_alibaba_apikey"));
   const [visionAlibabaUrl, setVisionAlibabaUrl] = useState(config("vision_alibaba_url"));
   const [visionAlibabaModel, setVisionAlibabaModel] = useState(config("vision_alibaba_model"));
+  const [visionAlibabaUseServerKey, setVisionAlibabaUseServerKey] = useState(config("vision_alibaba_use_server_key") === 'true');
   const [visionSystemPrompt, setVisionSystemPrompt] = useState(config("vision_system_prompt"));
 
   const [bgUrl, setBgUrl] = useState(config("bg_url"));
@@ -289,7 +292,7 @@ export const Settings = ({
     chatbotBackend,
     arbiusLLMModelId,
     openAIApiKey, openAIUrl, openAIModel,
-    alibabaApiKey, alibabaUrl, alibabaModel, alibabaEnableThinking,
+    alibabaApiKey, alibabaUrl, alibabaModel, alibabaEnableThinking, alibabaUseServerKey,
     llamaCppUrl, llamaCppStopSequence,
     ollamaUrl, ollamaModel,
     koboldAiUrl, koboldAiUseExtra, koboldAiStopSequence,
@@ -299,7 +302,7 @@ export const Settings = ({
     elevenlabsApiKey, elevenlabsVoiceId,
     speechT5SpeakerEmbeddingsUrl,
     openAITTSApiKey, openAITTSUrl, openAITTSModel, openAITTSVoice,
-    alibabaTTSApiKey, alibabaTTSUrl, alibabaTTSModel, alibabaTTSVoice,
+    alibabaTTSApiKey, alibabaTTSUrl, alibabaTTSModel, alibabaTTSVoice, alibabaTTSUseServerKey,
     piperUrl,
     rvcUrl,rvcEnabled,rvcModelName,rvcIndexPath,rvcF0upKey,rvcF0Method,rvcIndexRate,rvcFilterRadius,,rvcResampleSr,rvcRmsMixRate,rvcProtect,
     coquiLocalUrl,coquiLocalVoiceId,
@@ -309,7 +312,7 @@ export const Settings = ({
     visionLlamaCppUrl,
     visionOllamaUrl, visionOllamaModel,
     visionOpenAIApiKey, visionOpenAIUrl, visionOpenAIModel,
-    visionAlibabaApiKey, visionAlibabaUrl, visionAlibabaModel,
+    visionAlibabaApiKey, visionAlibabaUrl, visionAlibabaModel, visionAlibabaUseServerKey,
     visionSystemPrompt,
     bgColor,
     bgUrl, vrmHash, vrmUrl, youtubeVideoID, animationUrl, animationProcedural,
@@ -508,6 +511,8 @@ export const Settings = ({
         setAlibabaModel={setAlibabaModel}
         alibabaEnableThinking={alibabaEnableThinking}
         setAlibabaEnableThinking={setAlibabaEnableThinking}
+        alibabaUseServerKey={alibabaUseServerKey}
+        setAlibabaUseServerKey={setAlibabaUseServerKey}
         setSettingsUpdated={setSettingsUpdated}
         />
 
@@ -607,6 +612,8 @@ export const Settings = ({
         setAlibabaTTSModel={setAlibabaTTSModel}
         alibabaTTSVoice={alibabaTTSVoice}
         setAlibabaTTSVoice={setAlibabaTTSVoice}
+        alibabaTTSUseServerKey={alibabaTTSUseServerKey}
+        setAlibabaTTSUseServerKey={setAlibabaTTSUseServerKey}
         setSettingsUpdated={setSettingsUpdated}
         />
 
@@ -753,6 +760,8 @@ export const Settings = ({
         setVisionAlibabaUrl={setVisionAlibabaUrl}
         visionAlibabaModel={visionAlibabaModel}
         setVisionAlibabaModel={setVisionAlibabaModel}
+        visionAlibabaUseServerKey={visionAlibabaUseServerKey}
+        setVisionAlibabaUseServerKey={setVisionAlibabaUseServerKey}
         setSettingsUpdated={setSettingsUpdated}
         />
 
