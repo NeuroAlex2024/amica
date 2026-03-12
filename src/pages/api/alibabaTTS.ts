@@ -80,10 +80,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           voice,
           language_type: getAlibabaLanguageType(language),
         },
-        parameters: {
-          sample_rate: 24000,
-          response_format: 'wav',
-        },
       }),
     });
 
