@@ -823,7 +823,6 @@ export class Chat {
       } else if (visionBackend === "vision_alibaba") {
         const messages: Message[] = [
           { role: "user", content: config("vision_system_prompt") },
-          ...this.messageList! as any[],
           {
             role: "user",
             // @ts-ignore normally this is a string
