@@ -5,7 +5,9 @@ import { Message } from '@/features/chat/messages';
 
 export const config = {
   api: {
-    bodyParser: true,
+    bodyParser: {
+      sizeLimit: '4mb',
+    },
   },
 };
 
