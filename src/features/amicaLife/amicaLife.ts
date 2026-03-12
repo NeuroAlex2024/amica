@@ -11,6 +11,7 @@ import {
   handleIdleEvent,
   basedPrompt,
   TimestampedPrompt,
+  resetStoredSubconcious,
 } from "@/features/amicaLife/eventHandler";
 import { Viewer } from "../vrmViewer/viewer";
 
@@ -49,16 +50,26 @@ export class AmicaLife {
   }
 
   public initialize(viewer: Viewer, chat: Chat, setSubconciousLogs: (subconciousLogs: TimestampedPrompt[]) => void, isChatSpeaking: boolean) {
+    this.mainEvents.clear();
+    this.triggerMessage = false;
+    this.eventProcessing = false;
+    this.isSleep = false;
+    this.isPause = false;
+
     this.viewer = viewer;
     this.chat = chat;
 
     this.setSubconciousLogs = setSubconciousLogs
     this.isChatSpeaking = isChatSpeaking
+    resetStoredSubconcious();
+    this.setSubconciousLogs([]);
 
     this.loadIdleTextPrompt(null);
 
-    // This loop will run depending on Amica Life Enabled/Disabled config
-    this.processingIdle();
+    if (!this.initialized) {
+      // This loop runs forever and should only be started once per app runtime
+      this.processingIdle();
+    }
 
     this.initialized = true;
   }

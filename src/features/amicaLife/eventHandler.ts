@@ -17,7 +17,6 @@ import { handleSubconscious } from "../externalAPI/externalAPI";
 export const idleEvents = [
   "VRMA",
   "Subconcious",
-  "IdleTextPrompts",
 ] as const;
 
 export const basedPrompt = {
@@ -49,6 +48,10 @@ export type TimestampedPrompt = {
 
 // Placeholder for storing compressed subconscious prompts
 export let storedSubconcious: TimestampedPrompt[] = [];
+
+export function resetStoredSubconcious() {
+  storedSubconcious = [];
+}
 
 let previousAnimation = "";
 

@@ -42,6 +42,7 @@ import isDev from '@/utils/isDev';
 
 import { isCharacterIdle, characterIdleTime, resetIdleTimer } from "@/utils/isIdle";
 import { getOpenRouterChatResponseStream } from './openRouterChat';
+import { getAlibabaChatResponseStream } from './alibabaChat';
 import { handleUserInput } from '../externalAPI/externalAPI';
 import { loadVRMAnimation } from '@/lib/VRMAnimation/loadVRMAnimation';
 
@@ -140,10 +141,13 @@ export class Chat {
     this.setThoughtMessage = setThoughtMessage;
     this.setChatProcessing = setChatProcessing;
     this.setChatSpeaking = setChatSpeaking;
+    this.resetConversation();
 
-    // these will run forever
-    this.processTtsJobs();
-    this.processSpeakJobs();
+    if (!this.initialized) {
+      // these run forever and should only be started once per app runtime
+      this.processTtsJobs();
+      this.processSpeakJobs();
+    }
 
     this.updateAwake();
     this.initialized = true;
@@ -159,6 +163,21 @@ export class Chat {
     this.setAssistantMessage!(this.currentAssistantMessage);
     this.setUserMessage!(this.currentAssistantMessage);
     this.currentStreamIdx++;
+  }
+
+  public resetConversation() {
+    this.messageList = [];
+    this.currentAssistantMessage = "";
+    this.currentUserMessage = "";
+    this.thoughtMessage = "";
+    this.currentStreamIdx++;
+    this.ttsJobs.clear();
+    this.speakJobs.clear();
+
+    this.setChatLog?.([]);
+    this.setAssistantMessage?.("");
+    this.setUserMessage?.("");
+    this.setThoughtMessage?.("");
   }
 
   public async handleRvc(audio: any) {
@@ -733,6 +752,8 @@ export class Chat {
         return getKoboldAiChatResponseStream(messages);
       case 'openrouter':
         return getOpenRouterChatResponseStream(messages);
+      case 'alibaba':
+        return getAlibabaChatResponseStream(messages);
     }
 
     return getEchoChatResponseStream(messages);

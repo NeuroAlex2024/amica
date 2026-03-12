@@ -39,6 +39,7 @@ import { CharacterAnimationPage } from './settings/CharacterAnimationPage';
 import { ChatbotBackendPage } from './settings/ChatbotBackendPage';
 import { ArbiusLLMSettingsPage } from './settings/ArbiusLLMSettingsPage';
 import { ChatGPTSettingsPage } from './settings/ChatGPTSettingsPage';
+import { AlibabaSettingsPage } from './settings/AlibabaSettingsPage';
 import { LlamaCppSettingsPage } from './settings/LlamaCppSettingsPage';
 import { OllamaSettingsPage } from './settings/OllamaSettingsPage';
 import { KoboldAiSettingsPage } from './settings/KoboldAiSettingsPage';
@@ -94,6 +95,10 @@ export const Settings = ({
   const [openAIApiKey, setOpenAIApiKey] = useState(config("openai_apikey"));
   const [openAIUrl, setOpenAIUrl] = useState(config("openai_url"));
   const [openAIModel, setOpenAIModel] = useState(config("openai_model"));
+  const [alibabaApiKey, setAlibabaApiKey] = useState(config("alibaba_apikey"));
+  const [alibabaUrl, setAlibabaUrl] = useState(config("alibaba_url"));
+  const [alibabaModel, setAlibabaModel] = useState(config("alibaba_model"));
+  const [alibabaEnableThinking, setAlibabaEnableThinking] = useState<boolean>(config("alibaba_enable_thinking") === 'true');
   const [llamaCppUrl, setLlamaCppUrl] = useState(config("llamacpp_url"));
   const [llamaCppStopSequence, setLlamaCppStopSequence] = useState(config("llamacpp_stop_sequence"));
   const [ollamaUrl, setOllamaUrl] = useState(config("ollama_url"));
@@ -275,6 +280,7 @@ export const Settings = ({
     chatbotBackend,
     arbiusLLMModelId,
     openAIApiKey, openAIUrl, openAIModel,
+    alibabaApiKey, alibabaUrl, alibabaModel, alibabaEnableThinking,
     llamaCppUrl, llamaCppStopSequence,
     ollamaUrl, ollamaModel,
     koboldAiUrl, koboldAiUseExtra, koboldAiStopSequence,
@@ -363,7 +369,7 @@ export const Settings = ({
 
     case 'chatbot':
       return <MenuPage
-        keys={["chatbot_backend", "name", "system_prompt", "arbius_llm_settings", "chatgpt_settings", "llamacpp_settings", "ollama_settings", "koboldai_settings", "moshi_settings", "openrouter_settings"]}
+        keys={["chatbot_backend", "name", "system_prompt", "arbius_llm_settings", "chatgpt_settings", "alibaba_settings", "llamacpp_settings", "ollama_settings", "koboldai_settings", "moshi_settings", "openrouter_settings"]}
         menuClick={handleMenuClick} />;
 
     case 'language':
@@ -478,6 +484,19 @@ export const Settings = ({
         setOpenAIUrl={setOpenAIUrl}
         openAIModel={openAIModel}
         setOpenAIModel={setOpenAIModel}
+        setSettingsUpdated={setSettingsUpdated}
+        />
+
+    case 'alibaba_settings':
+      return <AlibabaSettingsPage
+        alibabaApiKey={alibabaApiKey}
+        setAlibabaApiKey={setAlibabaApiKey}
+        alibabaUrl={alibabaUrl}
+        setAlibabaUrl={setAlibabaUrl}
+        alibabaModel={alibabaModel}
+        setAlibabaModel={setAlibabaModel}
+        alibabaEnableThinking={alibabaEnableThinking}
+        setAlibabaEnableThinking={setAlibabaEnableThinking}
         setSettingsUpdated={setSettingsUpdated}
         />
 

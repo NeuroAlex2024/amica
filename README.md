@@ -29,6 +29,27 @@
 6. Добавить режимы личности/агентов, например horny, business и другие.
 7. Построить более сильный слой памяти, чтобы Amica вела себя как цельная развивающаяся личность.
 
+### Текущий статус миграции модельного стека
+
+На текущем этапе уже завершен первый практический шаг по миграции чата:
+
+- добавлен отдельный chat provider `Alibaba Cloud`
+- чат работает через `Alibaba Cloud Model Studio`
+- текущая рабочая модель для локальной проверки: `qwen3.5-flash`
+- интеграция чата идет через OpenAI-compatible path Alibaba Cloud
+- для стабильности браузерный вызов завернут в локальный server-side proxy `POST /api/alibabaChat/`
+- в настройках доступен переключатель `thinking mode`, по умолчанию он выключен
+- после перезагрузки страницы контекст активного диалога сбрасывается
+
+### Дорожная карта миграции на Alibaba Cloud
+
+Дальнейший целевой план по стеку такой:
+
+1. Сначала перевести `chat` на `qwen3.5-plus` через existing OpenAI-compatible path.
+2. Потом перевести `vision` на `qwen-vl-plus` или `qwen3.5-plus` через тот же compatible path.
+3. Потом добавить отдельный `alibaba_asr` backend на `qwen3-asr-flash`.
+4. В конце добавить отдельный `alibaba_tts` backend, и здесь использовать server-side proxy, а не прямой фронтовый вызов.
+
 ## Что Это За Проект
 
 Amica позволяет общаться с настраиваемыми 3D-персонажами, которые умеют вести голосовой диалог, использовать vision, выражать эмоции и работать как AI-компаньон. Этот форк сохраняет фундамент оригинального проекта и превращает его в продуктовый companion runtime для `lex-project`.
@@ -164,15 +185,27 @@ npm ci
 
 Для текущего локально проверенного сценария:
 
-- Chat backend: `ChatGPT`
-- OpenAI URL: `https://api.openai.com`
-- OpenAI Model: `gpt-4o-mini`
+- Chat backend: `Alibaba Cloud`
+- Alibaba URL: `https://dashscope-intl.aliyuncs.com/compatible-mode`
+- Alibaba Model: `qwen3.5-flash`
+- Alibaba Thinking Mode: `false`
 - Vision backend: `OpenAI`
 - Vision URL: `https://api.openai.com`
 - Vision Model: `gpt-4.1-mini`
 - TTS backend: `OpenAI TTS`
 - TTS URL: `https://api.openai.com`
 - TTS Model: `tts-1`
+
+### Конфигурация Alibaba Cloud
+
+Чтобы использовать Alibaba Cloud как чат-бэкенд, задай следующие переменные в `.env.local`:
+
+- `NEXT_PUBLIC_ALIBABA_APIKEY`: API key Alibaba Cloud Model Studio
+- `NEXT_PUBLIC_ALIBABA_URL`: базовый URL compatible-mode, для Singapore `https://dashscope-intl.aliyuncs.com/compatible-mode`
+- `NEXT_PUBLIC_ALIBABA_MODEL`: модель чата, например `qwen3.5-flash`
+- `NEXT_PUBLIC_ALIBABA_ENABLE_THINKING`: `true` или `false`
+
+Текущая реализация использует локальный proxy route `POST /api/alibabaChat/`, чтобы не зависеть от браузерных сетевых ограничений и прямого фронтового вызова в Alibaba Cloud.
 
 ### Конфигурация OpenRouter
 

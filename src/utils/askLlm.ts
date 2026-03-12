@@ -7,6 +7,7 @@ import { getLlamaCppChatResponseStream, getLlavaCppChatResponse } from "@/featur
 import { getWindowAiChatResponseStream } from "@/features/chat/windowAiChat";
 import { getOllamaChatResponseStream, getOllamaVisionChatResponse } from "@/features/chat/ollamaChat";
 import { getKoboldAiChatResponseStream } from "@/features/chat/koboldAiChat";
+import { getAlibabaChatResponseStream } from "@/features/chat/alibabaChat";
 
 import { config } from "@/utils/config";
 import { processResponse } from "@/utils/processResponse";
@@ -50,6 +51,8 @@ export async function askLLM(
         return getOllamaChatResponseStream(messages);
       case "koboldai":
         return getKoboldAiChatResponseStream(messages);
+      case "alibaba":
+        return getAlibabaChatResponseStream(messages);
       default:
         return getEchoChatResponseStream(messages);
     }
