@@ -278,8 +278,11 @@ npm ci
 
 1. Использовать отдельный Vercel project `amica-ru-test`.
 2. Подключить этот проект к тому же репозиторию `NeuroAlex2024/amica`.
-3. Поставить для `amica-ru-test` `Production Branch = preview`.
-4. Держать постоянную ветку `preview` на GitHub.
+3. Держать постоянную ветку `preview` на GitHub.
+4. В `Vercel -> amica-ru-test -> Settings -> Domains` привязать `amica-ru-test.vercel.app` к:
+   - `Connect to an environment`
+   - `Preview`
+   - ветке `preview`
 5. Работать по схеме:
    - `feature/...` -> PR в `preview`, если нужно обновить стабильный тестовый стенд
    - тестирование на `amica-ru-test.vercel.app`
