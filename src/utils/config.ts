@@ -85,7 +85,7 @@ export const defaults = {
   alibaba_tts_apikey: process.env.NEXT_PUBLIC_ALIBABA_TTS_APIKEY ?? process.env.NEXT_PUBLIC_ALIBABA_APIKEY ?? '',
   alibaba_tts_url: process.env.NEXT_PUBLIC_ALIBABA_TTS_URL ?? 'https://dashscope-intl.aliyuncs.com',
   alibaba_tts_model: process.env.NEXT_PUBLIC_ALIBABA_TTS_MODEL ?? 'qwen3-tts-flash',
-  alibaba_tts_voice: process.env.NEXT_PUBLIC_ALIBABA_TTS_VOICE ?? 'Serena',
+  alibaba_tts_voice: process.env.NEXT_PUBLIC_ALIBABA_TTS_VOICE ?? 'Chelsie',
   alibaba_tts_use_server_key: process.env.NEXT_PUBLIC_ALIBABA_TTS_USE_SERVER_KEY ?? process.env.NEXT_PUBLIC_ALIBABA_USE_SERVER_KEY ?? 'false',
   rvc_url: process.env.NEXT_PUBLIC_RVC_URL ?? 'http://localhost:8001/voice2voice',
   rvc_enabled: process.env.NEXT_PUBLIC_RVC_ENABLED ?? 'false',

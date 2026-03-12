@@ -63,7 +63,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const baseUrl = (req.body?.url || getStoredValue('alibaba_tts_url', 'https://dashscope-intl.aliyuncs.com')).replace(/\/+$/, '');
     const model = req.body?.model || getStoredValue('alibaba_tts_model', 'qwen3-tts-flash');
-    const voice = req.body?.voice || getStoredValue('alibaba_tts_voice', 'Serena') || 'Serena';
+    const voice = req.body?.voice || getStoredValue('alibaba_tts_voice', 'Chelsie') || 'Chelsie';
     const language = req.body?.language || getStoredValue('language', 'en');
 
     const response = await fetch(`${baseUrl}/api/v1/services/aigc/multimodal-generation/generation`, {

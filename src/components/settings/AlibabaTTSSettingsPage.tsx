@@ -7,13 +7,23 @@ import { SwitchBox } from '@/components/switchBox';
 import { config, updateConfig } from '@/utils/config';
 
 const alibabaTTSVoices = [
+  { key: 'Chelsie', label: 'Chelsie' },
   { key: 'Serena', label: 'Serena' },
   { key: 'Cherry', label: 'Cherry' },
-  { key: 'Chelsie', label: 'Chelsie' },
   { key: 'Ethan', label: 'Ethan' },
+  { key: 'Momo', label: 'Momo' },
 ];
 
 const customVoiceKey = '__custom__';
+const customModelKey = '__custom_model__';
+
+const alibabaTTSModels = [
+  { key: 'qwen3-tts-flash', label: 'qwen3-tts-flash' },
+  { key: 'qwen3-tts-flash-2025-11-27', label: 'qwen3-tts-flash-2025-11-27' },
+  { key: 'qwen3-tts-flash-2025-09-18', label: 'qwen3-tts-flash-2025-09-18' },
+  { key: 'qwen3-tts-instruct-flash', label: 'qwen3-tts-instruct-flash' },
+  { key: 'qwen3-tts-instruct-flash-2026-01-26', label: 'qwen3-tts-instruct-flash-2026-01-26' },
+];
 
 export function AlibabaTTSSettingsPage({
   alibabaTTSApiKey,
@@ -41,6 +51,9 @@ export function AlibabaTTSSettingsPage({
   setSettingsUpdated: (updated: boolean) => void;
 }) {
   const { t } = useTranslation();
+  const selectedModelPreset = alibabaTTSModels.some((model) => model.key === alibabaTTSModel)
+    ? alibabaTTSModel
+    : customModelKey;
   const selectedPreset = alibabaTTSVoices.some((voice) => voice.key === alibabaTTSVoice)
     ? alibabaTTSVoice
     : customVoiceKey;
@@ -97,7 +110,29 @@ export function AlibabaTTSSettingsPage({
           </FormRow>
         </li>
         <li className="py-4">
-          <FormRow label={t('Model')}>
+          <FormRow label={t('Model Preset', 'Model Preset')}>
+            <select
+              className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              value={selectedModelPreset}
+              onChange={(event: React.ChangeEvent<any>) => {
+                if (event.target.value === customModelKey) {
+                  return;
+                }
+
+                setAlibabaTTSModel(event.target.value);
+                updateConfig('alibaba_tts_model', event.target.value);
+                setSettingsUpdated(true);
+              }}
+            >
+              {alibabaTTSModels.map((model) => (
+                <option key={model.key} value={model.key}>{model.label}</option>
+              ))}
+              <option value={customModelKey}>{t('Custom', 'Custom')}</option>
+            </select>
+          </FormRow>
+        </li>
+        <li className="py-4">
+          <FormRow label={t('Model ID', 'Model ID')}>
             <TextInput
               value={alibabaTTSModel}
               onChange={(event: React.ChangeEvent<any>) => {
