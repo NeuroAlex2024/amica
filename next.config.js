@@ -12,6 +12,7 @@ const nextConfig = {
   assetPrefix: process.env.BASE_PATH || "",
   basePath: process.env.BASE_PATH || "",
   trailingSlash: true,
+  skipTrailingSlashRedirect: true,
   publicRuntimeConfig: {
     root: process.env.BASE_PATH || "",
   },

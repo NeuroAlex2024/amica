@@ -3,7 +3,7 @@ import { config } from '@/utils/config';
 
 export async function getAlibabaVisionChatResponse(messages: Message[]): Promise<string> {
   const useServerKey = config('vision_alibaba_use_server_key') === 'true';
-  const response = await fetch('/api/alibabaVision/', {
+  const response = await fetch('/api/alibabaVision', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { handleGetConfig } from '@/features/externalAPI/dataHelper';
 import { Message } from '@/features/chat/messages';
+import { getStoredConfigValue, readStoredConfig } from '@/utils/readStoredConfig';
 
 function buildAlibabaMessages(messages: Message[]): Message[] {
   const brevityInstruction = "Keep responses brief and conversational. Usually reply in 1 to 3 short sentences unless the user explicitly asks for detail. Do not monologue or continue talking without need.";
@@ -30,15 +30,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
   }
 
-  const storedConfig = handleGetConfig();
-  const getStoredValue = (key: string, fallback: string) => {
-    return storedConfig?.[key] ?? fallback;
-  };
+  const storedConfig = readStoredConfig();
 
   const useServerKey = req.body?.useServerKey === true;
   const apiKey = useServerKey
     ? process.env.ALIBABA_APIKEY || process.env.NEXT_PUBLIC_ALIBABA_APIKEY || ''
-    : req.body?.apiKey || getStoredValue('alibaba_apikey', process.env.ALIBABA_APIKEY || process.env.NEXT_PUBLIC_ALIBABA_APIKEY || '');
+    : req.body?.apiKey || getStoredConfigValue(storedConfig, 'alibaba_apikey', process.env.ALIBABA_APIKEY || process.env.NEXT_PUBLIC_ALIBABA_APIKEY || '');
   if (!apiKey) {
     return res.status(400).json({ error: 'Alibaba Cloud API key is required' });
   }
@@ -49,9 +46,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const url = (req.body?.url || getStoredValue('alibaba_url', 'https://dashscope-intl.aliyuncs.com/compatible-mode')).replace(/\/+$/, '');
-    const model = req.body?.model || getStoredValue('alibaba_model', 'qwen3.5-flash');
-    const enableThinking = req.body?.enableThinking === true || getStoredValue('alibaba_enable_thinking', 'false') === 'true';
+    const url = (req.body?.url || getStoredConfigValue(storedConfig, 'alibaba_url', 'https://dashscope-intl.aliyuncs.com/compatible-mode')).replace(/\/+$/, '');
+    const model = req.body?.model || getStoredConfigValue(storedConfig, 'alibaba_model', 'qwen3.5-flash');
+    const enableThinking = req.body?.enableThinking === true || getStoredConfigValue(storedConfig, 'alibaba_enable_thinking', 'false') === 'true';
 
     const response = await fetch(`${url}/v1/chat/completions`, {
       method: 'POST',

@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { handleGetConfig } from '@/features/externalAPI/dataHelper';
 import { normalizeLanguage } from '@/utils/languageDefaults';
+import { getStoredConfigValue, readStoredConfig } from '@/utils/readStoredConfig';
 
 export const config = {
   api: {
@@ -41,16 +41,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
   }
 
-  const storedConfig = handleGetConfig();
-  const getStoredValue = (key: string, fallback: string) => {
-    return storedConfig?.[key] ?? fallback;
-  };
+  const storedConfig = readStoredConfig();
 
   const useServerKey = req.body?.useServerKey === true;
   const serverKey = process.env.ALIBABA_TTS_APIKEY || process.env.ALIBABA_APIKEY || process.env.NEXT_PUBLIC_ALIBABA_TTS_APIKEY || process.env.NEXT_PUBLIC_ALIBABA_APIKEY || '';
   const apiKey = useServerKey
     ? serverKey
-    : req.body?.apiKey || getStoredValue('alibaba_tts_apikey', getStoredValue('alibaba_apikey', serverKey));
+    : req.body?.apiKey || getStoredConfigValue(storedConfig, 'alibaba_tts_apikey', getStoredConfigValue(storedConfig, 'alibaba_apikey', serverKey));
   if (!apiKey) {
     return res.status(400).json({ error: 'Alibaba Cloud TTS API key is required' });
   }
@@ -61,10 +58,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const baseUrl = (req.body?.url || getStoredValue('alibaba_tts_url', 'https://dashscope-intl.aliyuncs.com')).replace(/\/+$/, '');
-    const model = req.body?.model || getStoredValue('alibaba_tts_model', 'qwen3-tts-flash');
-    const voice = req.body?.voice || getStoredValue('alibaba_tts_voice', 'Chelsie') || 'Chelsie';
-    const language = req.body?.language || getStoredValue('language', 'en');
+    const baseUrl = (req.body?.url || getStoredConfigValue(storedConfig, 'alibaba_tts_url', 'https://dashscope-intl.aliyuncs.com')).replace(/\/+$/, '');
+    const model = req.body?.model || getStoredConfigValue(storedConfig, 'alibaba_tts_model', 'qwen3-tts-flash');
+    const voice = req.body?.voice || getStoredConfigValue(storedConfig, 'alibaba_tts_voice', 'Chelsie') || 'Chelsie';
+    const language = req.body?.language || getStoredConfigValue(storedConfig, 'language', 'en');
 
     const response = await fetch(`${baseUrl}/api/v1/services/aigc/multimodal-generation/generation`, {
       method: 'POST',

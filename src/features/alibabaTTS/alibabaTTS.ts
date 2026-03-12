@@ -4,7 +4,7 @@ export async function alibabaTTS(
   message: string,
 ) {
   const useServerKey = config('alibaba_tts_use_server_key') === 'true';
-  const res = await fetch('/api/alibabaTTS/', {
+  const res = await fetch('/api/alibabaTTS', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

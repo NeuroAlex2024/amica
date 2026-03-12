@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { handleGetConfig } from '@/features/externalAPI/dataHelper';
 import { Message } from '@/features/chat/messages';
+import { getStoredConfigValue, readStoredConfig } from '@/utils/readStoredConfig';
 
 export const config = {
   api: {
@@ -17,16 +17,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
   }
 
-  const storedConfig = handleGetConfig();
-  const getStoredValue = (key: string, fallback: string) => {
-    return storedConfig?.[key] ?? fallback;
-  };
+  const storedConfig = readStoredConfig();
 
   const useServerKey = req.body?.useServerKey === true;
   const serverKey = process.env.VISION_ALIBABA_APIKEY || process.env.ALIBABA_APIKEY || process.env.NEXT_PUBLIC_VISION_ALIBABA_APIKEY || process.env.NEXT_PUBLIC_ALIBABA_APIKEY || '';
   const apiKey = useServerKey
     ? serverKey
-    : req.body?.apiKey || getStoredValue('vision_alibaba_apikey', getStoredValue('alibaba_apikey', serverKey));
+    : req.body?.apiKey || getStoredConfigValue(storedConfig, 'vision_alibaba_apikey', getStoredConfigValue(storedConfig, 'alibaba_apikey', serverKey));
   if (!apiKey) {
     return res.status(400).json({ error: 'Alibaba Cloud Vision API key is required' });
   }
@@ -37,8 +34,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const url = (req.body?.url || getStoredValue('vision_alibaba_url', getStoredValue('alibaba_url', 'https://dashscope-intl.aliyuncs.com/compatible-mode'))).replace(/\/+$/, '');
-    const model = req.body?.model || getStoredValue('vision_alibaba_model', 'qwen3.5-plus');
+    const url = (req.body?.url || getStoredConfigValue(storedConfig, 'vision_alibaba_url', getStoredConfigValue(storedConfig, 'alibaba_url', 'https://dashscope-intl.aliyuncs.com/compatible-mode'))).replace(/\/+$/, '');
+    const model = req.body?.model || getStoredConfigValue(storedConfig, 'vision_alibaba_model', 'qwen3.5-plus');
 
     const response = await fetch(`${url}/v1/chat/completions`, {
       method: 'POST',

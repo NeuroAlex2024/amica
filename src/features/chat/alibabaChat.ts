@@ -3,7 +3,7 @@ import { config } from '@/utils/config';
 
 export async function getAlibabaChatResponseStream(messages: Message[]): Promise<ReadableStream> {
   const useServerKey = config('alibaba_use_server_key') === 'true';
-  const response = await fetch('/api/alibabaChat/', {
+  const response = await fetch('/api/alibabaChat', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
