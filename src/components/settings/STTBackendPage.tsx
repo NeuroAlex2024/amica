@@ -7,6 +7,7 @@ const sttEngines = [
   {key: "none",            label: "None"},
   {key: "whisper_browser", label: "Whisper (Browser)"},
   {key: "whisper_openai",  label: "Whisper (OpenAI)"},
+  {key: "alibaba_stt",     label: "Alibaba Cloud"},
   {key: "whispercpp",      label: "Whisper.cpp"},
 ];
 
@@ -54,7 +55,7 @@ export function STTBackendPage({
             </select>
           </FormRow>
         </li>
-        { ["whisper_openai", "whispercpp"].includes(sttBackend) && (
+        { ["whisper_openai", "alibaba_stt", "whispercpp"].includes(sttBackend) && (
           <li className="py-4">
             <FormRow label={`${t("Configure")} ${t(idToTitle(sttBackend))}`}>
               <button

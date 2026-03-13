@@ -7,8 +7,10 @@ import { IconButton } from "./iconButton";
 import { useTranscriber } from "@/hooks/useTranscriber";
 import { cleanTranscript, cleanFromPunctuation, cleanFromWakeWord } from "@/utils/stringProcessing";
 import { hasOnScreenKeyboard } from "@/utils/hasOnScreenKeyboard";
+import { latency } from "@/utils/latency";
 import { AlertContext } from "@/features/alert/alertContext";
 import { ChatContext } from "@/features/chat/chatContext";
+import { alibabaSTT } from "@/features/alibabaSTT/alibabaSTT";
 import { openaiWhisper  } from "@/features/openaiWhisper/openaiWhisper";
 import { whispercpp  } from "@/features/whispercpp/whispercpp";
 import { config } from "@/utils/config";
@@ -32,6 +34,7 @@ export default function MessageInput({
 }) {
   const transcriber = useTranscriber();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [alibabaSTTOutput, setAlibabaSTTOutput] = useState<any | null>(null);
   const [whisperOpenAIOutput, setWhisperOpenAIOutput] = useState<any | null>(null);
   const [whisperCppOutput, setWhisperCppOutput] = useState<any | null>(null);
   const { chat: bot } = useContext(ChatContext);
@@ -45,11 +48,15 @@ export default function MessageInput({
     onSpeechStart: () => {
       console.debug('vad', 'on_speech_start');
       console.time('performance_speech');
+      latency.start('voice');
+      latency.mark('vad_start');
     },
     onSpeechEnd: (audio: Float32Array) => {
       console.debug('vad', 'on_speech_end');
       console.timeEnd('performance_speech');
       console.time('performance_transcribe');
+      latency.mark('vad_end');
+      latency.mark('stt_start');
       (window as any).chatvrm_latency_tracker = {
         start: +Date.now(),
         active: true,
@@ -108,6 +115,27 @@ export default function MessageInput({
             })();
             break;
           }
+          case 'alibaba_stt': {
+            console.debug('alibaba_stt attempt');
+            const wav = new WaveFile();
+            wav.fromScratch(1, 16000, '32f', audio);
+            wav.toBitDepth('16');
+            const file = new File([wav.toBuffer()], "input.wav", { type: "audio/wav" });
+
+            let prompt;
+            // TODO load prompt if it exists
+
+            (async () => {
+              try {
+                const transcript = await alibabaSTT(file, prompt);
+                setAlibabaSTTOutput(transcript);
+              } catch (e: any) {
+                console.error('alibaba_stt error', e);
+                alert.error('alibaba_stt error', e.toString());
+              }
+            })();
+            break;
+          }
         }
       } catch (e: any) {
         console.error('stt_backend error', e);
@@ -121,6 +149,7 @@ export default function MessageInput({
   }
 
   function handleTranscriptionResult(preprocessed: string) {
+    latency.mark('stt_end');
     const cleanText = cleanTranscript(preprocessed);
     const wakeWordEnabled = config("wake_word_enabled") === 'true';
     const textStartsWithWakeWord = wakeWordEnabled && cleanFromPunctuation(cleanText).startsWith(cleanFromPunctuation(config("wake_word")));
@@ -182,6 +211,14 @@ export default function MessageInput({
     }
   }, [transcriber]);
 
+  // for alibaba_stt
+  useEffect(() => {
+    if (alibabaSTTOutput) {
+      const output = alibabaSTTOutput?.text;
+      handleTranscriptionResult(output);
+    }
+  }, [alibabaSTTOutput]);
+
   // for whisper_openai
   useEffect(() => {
     if (whisperOpenAIOutput) {
@@ -199,6 +236,7 @@ export default function MessageInput({
   }, [whisperCppOutput]);
 
   function clickedSendButton() {
+    latency.start('text');
     bot.receiveMessageFromUser(userMessage,false);
     // only if we are using non-VAD mode should we focus on the input
     if (! vad.listening) {

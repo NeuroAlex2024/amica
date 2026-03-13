@@ -41,6 +41,7 @@ import { cleanTalk } from "@/utils/cleanTalk";
 import { processResponse } from "@/utils/processResponse";
 import { wait } from "@/utils/wait";
 import isDev from '@/utils/isDev';
+import { latency } from "@/utils/latency";
 
 import { isCharacterIdle, characterIdleTime, resetIdleTimer } from "@/utils/isIdle";
 import { getOpenRouterChatResponseStream } from './openRouterChat';
@@ -235,7 +236,9 @@ export class Chat {
           continue;
         }
 
+        latency.mark('tts_start');
         const audioBuffer = await this.fetchAudio(ttsJob.screenplay.talk);
+        latency.mark('tts_ready');
         this.speakJobs.enqueue({
           audioBuffer,
           screenplay: ttsJob.screenplay,
@@ -270,6 +273,8 @@ export class Chat {
         this.bubbleMessage("assistant", speak.screenplay.text);
 
         if (speak.audioBuffer) {
+          latency.mark('avatar_start');
+          latency.done();
           this.setChatSpeaking!(true);
           await this.viewer!.model?.speak(speak.audioBuffer, speak.screenplay);
           this.setChatSpeaking!(false);
@@ -535,6 +540,7 @@ export class Chat {
 }
 
   public async makeAndHandleStream(messages: Message[]) {
+    latency.mark('llm_start');
     try {
       this.streams.push(await this.getChatResponseStream(messages));
     } catch (e: any) {
@@ -589,6 +595,7 @@ export class Chat {
         const { done, value } = await reader.read();
         if (!firstTokenEncountered) {
           console.timeEnd("performance_time_to_first_token");
+          latency.mark('llm_first_token');
           firstTokenEncountered = true;
         }
         if (done) break;
@@ -622,6 +629,7 @@ export class Chat {
             
             if (!firstSentenceEncountered) {
               console.timeEnd("performance_time_to_first_sentence");
+              latency.mark('llm_first_sentence');
               firstSentenceEncountered = true;
             }
 
@@ -769,6 +777,8 @@ export class Chat {
   }
 
   public async getVisionResponse(imageData: string) {
+    latency.start('vision');
+    latency.mark('vision_start');
     try {
       const visionBackend = config("vision_backend");
 
@@ -846,6 +856,8 @@ export class Chat {
         console.warn("vision_backend not supported", visionBackend);
         return;
       }
+
+      latency.mark('vision_end');
 
       await this.makeAndHandleStream([
         { role: "system", content: config("system_prompt") },

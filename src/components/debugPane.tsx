@@ -4,6 +4,7 @@ import { IconButton } from "@/components/iconButton";
 import { useKeyboardShortcut } from "@/hooks/useKeyboardShortcut";
 import { clsx } from "clsx";
 import { config } from "@/utils/config";
+import type { LatencySnapshot } from "@/utils/latency";
 
 const TOTAL_ITEMS_TO_SHOW = 100;
 
@@ -44,6 +45,7 @@ export function DebugPane({ onClickClose }: {
   const [typeInfoEnabled, setTypeInfoEnabled] = useState(true);
   const [typeWarnEnabled, setTypeWarnEnabled] = useState(true);
   const [typeErrorEnabled, setTypeErrorEnabled] = useState(true);
+  const [tick, setTick] = useState(0);
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -55,6 +57,14 @@ export function DebugPane({ onClickClose }: {
       block: "center",
     });
   }, []);
+
+  // Refresh latency section every second while pane is open
+  useEffect(() => {
+    const timer = setInterval(() => setTick(n => n + 1), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const latencySessions: LatencySnapshot[] = (window as any).__amica_latency || [];
 
   function onClickCopy() {
     navigator.clipboard.writeText(JSON.stringify((window as any).error_handler_logs));
@@ -103,6 +113,37 @@ export function DebugPane({ onClickClose }: {
           </span>
         </div>
         <div className="relative w-full max-h-screen overflow-y-scroll inline-block px-2 md:px-8">
+          {/* ── Latency panel ───────────────────────────────────── */}
+          {latencySessions.length > 0 && (
+            <div className="my-2 rounded-md border border-indigo-200 bg-indigo-50 p-2">
+              <div className="mb-1 font-semibold text-indigo-700 text-xs">⚡ Latency (last {latencySessions.length})</div>
+              {latencySessions.map((snap) => (
+                <div key={snap.id} className="mb-2">
+                  <div className="text-indigo-500 font-mono text-xs mb-0.5">
+                    #{snap.id} <span className="uppercase font-bold">{snap.type}</span> @ {snap.time}
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {snap.deltas.map((d) => (
+                      <span
+                        key={d.label}
+                        className={clsx(
+                          "inline-flex items-center rounded px-1.5 py-0.5 text-xs font-mono ring-1 ring-inset",
+                          d.ms > 2000
+                            ? "bg-red-100 text-red-700 ring-red-300"
+                            : d.ms > 800
+                            ? "bg-yellow-100 text-yellow-800 ring-yellow-300"
+                            : "bg-green-100 text-green-700 ring-green-300"
+                        )}
+                      >
+                        {d.label}: <strong className="ml-1">{d.ms}ms</strong>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          {/* ── Console logs ────────────────────────────────────── */}
           {(window as any).error_handler_logs.slice(-TOTAL_ITEMS_TO_SHOW).filter((log: any) => {
             if (log.type === 'debug' && !typeDebugEnabled) return false;
             if ((log.type === 'info' || log.type === 'log') && !typeInfoEnabled) return false;

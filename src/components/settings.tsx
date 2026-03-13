@@ -59,6 +59,7 @@ import { RVCSettingsPage } from './settings/RVCSettingsPage';
 import { STTBackendPage } from './settings/STTBackendPage';
 import { STTWakeWordSettingsPage } from './settings/STTWakeWordSettingsPage';
 
+import { AlibabaSTTSettingsPage } from './settings/AlibabaSTTSettingsPage';
 import { WhisperOpenAISettingsPage } from './settings/WhisperOpenAISettingsPage';
 import { WhisperCppSettingsPage } from './settings/WhisperCppSettingsPage';
 
@@ -178,6 +179,10 @@ export const Settings = ({
   const [sttWakeWordEnabled, setSTTWakeWordEnabled] = useState<boolean>(config("wake_word_enabled") === 'true' ? true : false);
   const [sttWakeWord, setSTTWakeWord] = useState(config("wake_word"));
   
+  const [alibabaSTTApiKey, setAlibabaSTTApiKey] = useState(config("alibaba_stt_apikey"));
+  const [alibabaSTTUrl, setAlibabaSTTUrl] = useState(config("alibaba_stt_url"));
+  const [alibabaSTTModel, setAlibabaSTTModel] = useState(config("alibaba_stt_model"));
+  const [alibabaSTTUseServerKey, setAlibabaSTTUseServerKey] = useState<boolean>(config("alibaba_stt_use_server_key") === 'true');
   const [whisperOpenAIUrl, setWhisperOpenAIUrl] = useState(config("openai_whisper_url"));
   const [whisperOpenAIApiKey, setWhisperOpenAIApiKey] = useState(config("openai_whisper_apikey"));
   const [whisperOpenAIModel, setWhisperOpenAIModel] = useState(config("openai_whisper_model"));
@@ -400,7 +405,7 @@ export const Settings = ({
 
     case 'stt':
       return <MenuPage
-        keys={["stt_backend", "stt_wake_word", "whisper_openai_settings", "whispercpp_settings"]}
+        keys={["stt_backend", "stt_wake_word", "whisper_openai_settings", "alibaba_stt_settings", "whispercpp_settings"]}
         menuClick={handleMenuClick} />;
 
     case 'vision':
@@ -705,6 +710,19 @@ export const Settings = ({
         setWhisperOpenAIApiKey={setWhisperOpenAIApiKey}
         whisperOpenAIModel={whisperOpenAIModel}
         setWhisperOpenAIModel={setWhisperOpenAIModel}
+        setSettingsUpdated={setSettingsUpdated}
+        />
+
+    case 'alibaba_stt_settings':
+      return <AlibabaSTTSettingsPage
+        alibabaSTTApiKey={alibabaSTTApiKey}
+        setAlibabaSTTApiKey={setAlibabaSTTApiKey}
+        alibabaSTTUrl={alibabaSTTUrl}
+        setAlibabaSTTUrl={setAlibabaSTTUrl}
+        alibabaSTTModel={alibabaSTTModel}
+        setAlibabaSTTModel={setAlibabaSTTModel}
+        alibabaSTTUseServerKey={alibabaSTTUseServerKey}
+        setAlibabaSTTUseServerKey={setAlibabaSTTUseServerKey}
         setSettingsUpdated={setSettingsUpdated}
         />
 
